@@ -16,11 +16,14 @@
 #define RAD_STEP	M_PI / 180	// step size for rendering circles/hypocycloid
 #define STEP        0.01		// step size for modifying values via keyboard
 
+
 int delta(float u, int m, int k)
 {
-    for (i=0; i <= m+k-1; i++)
+    //float U[];
+
+    for (int i = 0; i <= m + k - 1; i++)
     {
-       if (u>=U[i] && u<U[i+1])
+       if (u >= U[i] && u < U[i+1])
            return i;
     }
     return -1;
@@ -41,7 +44,7 @@ int main () {
     }
 
     glfwMakeContextCurrent (window);	
-    glfwSetKeyCallback(window, key_callback);	// setup input callback 
+//    glfwSetKeyCallback(window, key_callback);	// setup input callback
 
 
 	// Separate point lists for each screen element
@@ -53,15 +56,14 @@ int main () {
 
     Point3D points[] = new Point3D[10];
 
-
     // get indexFocus  evaluate the basis funcs
-    if ((u+ inc) > ufocus+1)
-        then focus = focus + ufocus+1;
+    //if ((u+ inc) > ufocus+1)
+      //  then focus = focus + ufocus+1;
 
     while (!glfwWindowShouldClose (window))
     {
         // generate basis funcs
-        render(points_h, points_R, points_r, points_l);		// render the scene
+        //render(points_h, points_R, points_r, points_l);		// render the scene
         glfwSwapBuffers(window);
 
 		glfwPollEvents();
