@@ -13,68 +13,113 @@
 #include <vector>
 #include <stdio.h>
 
-#define RAD_STEP	M_PI / 180	// step size for rendering circles/hypocycloid
-#define STEP        0.01		// step size for modifying values via keyboard
+using namespace std;
 
+GLFWwindow *window;
+int w, h;
+double mouseX, mouseY;
 
-int delta(float u, int m, int k)
-{
-	float *U = new float[3]{0, 0, 0};
+vector<double> cx, cy;
+int selected = -1;
+int selectDistance = 0.05;
 
-    for (int i = 0; i <= m + k - 1; i++)
-    {
-       if (u >= U[i] && u < U[i+1])
-           return i;
-    }
-    return -1;
+void render() {
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Functions for changing transformation matrix
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	/*	glTranslatef (0.0f, 0.5f, 0.0f);
+	glRotatef (30.0f, 0.0f, 0.0f, 1.0f);
+	glScalef (2.0f, 2.0f, 2.0f); */
+
+	//Functions for changing projection matrix
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-1, 1, -1, 1, -1, 1);
+	//gluPerspective (fov, aspect ratio, near plane, far plane)
+	//glFrustum
+
+	glPointSize(5.0);
+	//We draw a line on the screen, which gets transformed by the modelview matrix
+	glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
+	glColor3f(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < cx.size(); i++)
+	{
+		glVertex2f(cx[i], cy[i]);
+	}
+	glEnd();
 }
-bool indexFocus()
-{
-	int expected 
-	int actual = delta	
+
+
+void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
+		cout << "A was pressed.\n";
 }
 
-int main () {
+void mouseClick(GLFWwindow *sender, int button, int action, int mods) {
+	if (action == GLFW_PRESS){
+		for (int i = 0; i < cx.size(); i++){
+			if (abs(cx[i] - mouseX) <= selectDistance &&
+				abs(cy[i] - mouseY) <= selectDistance){
+				selected = i;
+			}
+		}
+		if (button == GLFW_MOUSE_BUTTON_LEFT && selected == -1){
+			cx.push_back(mouseX);
+			cy.push_back(mouseY);
+		}
+		if (button == GLFW_MOUSE_BUTTON_RIGHT && selected > -1){
+			cx.erase(cx.begin() + selected);
+			cy.erase(cy.begin() + selected);
+			selected = -1;
+		}
+	}
 
-    if (!glfwInit()) {
-        std::cout << "Could not initialize.\n";
-        return 1;
-    }
+	if (action == GLFW_RELEASE){
+		selected = -1;
+	}
 
-    GLFWwindow *window = glfwCreateWindow (640, 640, "My Window", NULL, NULL);
-    if (!window) {
-        std::cout << "Could not create window.\n";
-        glfwTerminate();
-        return 1;
-    }
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+		cout << mouseX << ' ' << mouseY << '\n';
+}
 
-    glfwMakeContextCurrent (window);	
-//    glfwSetKeyCallback(window, key_callback);	// setup input callback
+void mousePos(GLFWwindow *sender, double x, double y) {
+	mouseX = (x / w) * 2 - 1;
+	mouseY = (y / h) * (-2) + 1;
+
+	if (selected > -1){
+		cx[selected] = mouseX;
+		cy[selected] = mouseY;
+	}
+}
 
 
-	// Separate point lists for each screen element
+int main() {
+	if (!glfwInit())
+		return 1;
 
-    int curveOrder;
-    float increment;
+	window = glfwCreateWindow(640, 480, "My Window", NULL, NULL);
+	if (!window)
+		return 1;
 
-    std::vector<Point3D*> conrolPts;
+	glfwMakeContextCurrent(window);
+	glfwSetKeyCallback(window, keyboard);
+	glfwSetMouseButtonCallback(window, mouseClick);
+	glfwSetCursorPosCallback(window, mousePos);
+	while (!glfwWindowShouldClose(window)) {
+		glfwGetFramebufferSize(window, &w, &h);
+		glViewport(0, 0, w, h);
 
-    //Point3D points[] = new Point3D[10];
+		render();
 
-    // get indexFocus  evaluate the basis funcs
-    //if ((u+ inc) > ufocus+1)
-      //  then focus = focus + ufocus+1;
-
-    while (!glfwWindowShouldClose (window))
-    {
-        // generate basis funcs
-        //render(points_h, points_R, points_r, points_l);		// render the scene
-        glfwSwapBuffers(window);
-
+		glfwSwapBuffers(window);
 		glfwPollEvents();
-    }
+	}
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    return 0;
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	return 0;
 }
+
