@@ -1,5 +1,11 @@
 #include<GLFW/glfw3.h>
 
+class Program
+{
+public:
+	Point3D ctrlPts;
+}
+
 class Point3D	// your basic Point3D class
 {
 public:

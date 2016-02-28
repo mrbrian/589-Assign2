@@ -19,7 +19,7 @@
 
 int delta(float u, int m, int k)
 {
-    //float U[];
+	float *U = new float[3]{0, 0, 0};
 
     for (int i = 0; i <= m + k - 1; i++)
     {
@@ -27,6 +27,11 @@ int delta(float u, int m, int k)
            return i;
     }
     return -1;
+}
+bool indexFocus()
+{
+	int expected 
+	int actual = delta	
 }
 
 int main () {
@@ -54,7 +59,7 @@ int main () {
 
     std::vector<Point3D*> conrolPts;
 
-    Point3D points[] = new Point3D[10];
+    //Point3D points[] = new Point3D[10];
 
     // get indexFocus  evaluate the basis funcs
     //if ((u+ inc) > ufocus+1)
