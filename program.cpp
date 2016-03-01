@@ -5,7 +5,8 @@ using namespace std;
 void Program::curve(float u)
 {
 }
-/*
+/* sums of B-Spline algo
+
 void what(int k, int m, E[], u[], u)
 {
 	//Input k, m, E[], u[], u
@@ -31,17 +32,6 @@ void what(int k, int m, E[], u[], u)
 }
 */
 
-// knot sequence U is global
-int getIndex(float u, int m, int k, float *U)
-{
-    for (int i = 0; i < m + k; i++)
-    {
-        if (u >= U[i] && u < U[i + 1])
-            return i;
-    }
-    return -1;
-}
-
 double bSpline(int i, int order, double u, float *knots)
 {
     if (order == 1)
@@ -54,7 +44,7 @@ double bSpline(int i, int order, double u, float *knots)
     return ((1-u) * bSpline(i, order-1, u, knots), u * bSpline(i+1, order-1, u, knots));
 }
 
-/*
+/* wheres this from  whats it do
 void E_delta_1(k, m, u)
 {
 	d = delta(u, m, k)

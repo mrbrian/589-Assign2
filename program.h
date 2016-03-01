@@ -24,6 +24,5 @@ private:
 };
 
 double bSpline(int i, int order, double u, float *knots);
-int getIndex(float u, int m, int k, float *knots);
 
 #endif
