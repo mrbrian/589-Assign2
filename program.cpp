@@ -5,7 +5,7 @@ using namespace std;
 void Program::curve(float u)
 {
 }
-
+/*
 void what(int k, int m, E[], u[], u)
 {
 	//Input k, m, E[], u[], u
@@ -29,23 +29,32 @@ void what(int k, int m, E[], u[], u)
 	endfor;
 	t output c[0]; 
 }
+*/
 
-double bSpline(int i, int n, float *knots, double u)
-{
-	if (n == 1)
-	{
-		if (u
-	}
-}
 // knot sequence U is global
-int delta(u, m, k)
+int getIndex(float u, int m, int k, float *U)
 {
-	for i = 0 to m + k - 1
-		if u >= U[i] and u < U[i + 1] return i
-			end
-			return -1
+    for (int i = 0; i < m + k; i++)
+    {
+        if (u >= U[i] && u < U[i + 1])
+            return i;
+    }
+    return -1;
 }
 
+double bSpline(int i, int order, double u, float *knots)
+{
+    if (order == 1)
+    {
+        if (knots[i] <= u && u < knots[i+1])
+            return 1;
+        else
+            return 0;
+    }
+    return ((1-u) * bSpline(i, order-1, u, knots), u * bSpline(i+1, order-1, u, knots));
+}
+
+/*
 void E_delta_1(k, m, u)
 {
 	d = delta(u, m, k)
@@ -62,20 +71,4 @@ void E_delta_1(k, m, u)
 					end
 					Output c[0]
 }
-
-void test_bSplineTable()
-{
-}
-
-void test_bSplineBasis()
-{
-	float expected = 0;
-	double actual = bSpline(0, 2, 0);
-}
-
-void test_bernstein()
-{
-	float expected = 0;
-	double actual = bernstein(0, 2, 0);
-
-}
+*/

@@ -4,8 +4,8 @@ LIBDIRS += -L/usr/X11R6/lib -L/usr/X11R6/lib64 -L/usr/local/lib
 INCDIRS += -I/usr/include -I/usr/local/include -I/usr/include/GL
 
 
-$(EXEFILE): main.cpp
-	g++ -o $(EXEFILE) $(LIBDIRS) $(INCDIRS) $(LIBS) main.cpp
+$(EXEFILE): main.cpp test.cpp program.cpp
+	g++ -o $(EXEFILE) $(LIBDIRS) $(INCDIRS) $(LIBS) main.cpp program.cpp test.cpp
 
 clean:
 	rm $(EXEFILE)

@@ -2,7 +2,7 @@
 #define PROGRAM_H
 
 #include <GLFW/glfw3.h>
-#include "Point2D.h"
+#include "point2D.h"
 #include <vector>
 
 using namespace std;
@@ -22,5 +22,8 @@ private:
 	int selected;
 	vector<Point2D> points;
 };
+
+double bSpline(int i, int order, double u, float *knots);
+int getIndex(float u, int m, int k, float *knots);
 
 #endif
