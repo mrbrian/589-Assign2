@@ -99,7 +99,6 @@ void mousePos(GLFWwindow *sender, double x, double y) {
 int main() {
 
     Tests t = Tests();
-return 0;
 	if (!glfwInit())
 		return 1;
 

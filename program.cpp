@@ -40,11 +40,13 @@ double bSpline(int i, int order, double u, float *knots)
             return 1;
         else
             return 0;
-    }
-    return ((1-u) * bSpline(i, order-1, u, knots), u * bSpline(i+1, order-1, u, knots));
+	}
+	double a = (1 - u) * bSpline(i, order - 1, u, knots);
+	double b = u * bSpline(i + 1, order - 1, u, knots);
+	return (a + b);
 }
-
-/* wheres this from  whats it do
+/*
+ wheres this from  whats it do
 void E_delta_1(k, m, u)
 {
 	d = delta(u, m, k)
