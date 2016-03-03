@@ -23,7 +23,6 @@ int w, h;
 double mouseX, mouseY;
 
 int selected = -1;
-int selectDistance = 0.05;
 
 void render() {
 	glEnable(GL_DEPTH_TEST);
@@ -52,6 +51,15 @@ void render() {
 		glVertex2f(prog.points[i].x, prog.points[i].y);
 	}
 	glEnd();
+
+	glBegin(GL_LINE_STRIP); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
+	glColor3f(1.0f, 0.0f, 1.0f);
+
+	for (int i = 0; i < prog.splinePoints.size(); i++)
+	{
+		glVertex2f(prog.splinePoints[i].x, prog.splinePoints[i].y);
+	}
+	glEnd();
 }
 
 
@@ -62,21 +70,7 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 
 void mouseClick(GLFWwindow *sender, int button, int action, int mods) {
 	if (action == GLFW_PRESS){
-		for (int i = 0; i < cx.size(); i++){
-			if (abs(cx[i] - mouseX) <= selectDistance &&
-				abs(cy[i] - mouseY) <= selectDistance){
-				selected = i;
-			}
-		}
-		if (button == GLFW_MOUSE_BUTTON_LEFT && selected == -1){
-			cx.push_back(mouseX);
-			cy.push_back(mouseY);
-		}
-		if (button == GLFW_MOUSE_BUTTON_RIGHT && selected > -1){
-			cx.erase(cx.begin() + selected);
-			cy.erase(cy.begin() + selected);
-			selected = -1;
-		}
+		prog.mouseClick(button, mouseX, mouseY);
 	}
 
 	if (action == GLFW_RELEASE){
@@ -91,10 +85,10 @@ void mousePos(GLFWwindow *sender, double x, double y) {
 	mouseX = (x / w) * 2 - 1;
 	mouseY = (y / h) * (-2) + 1;
 
-	if (selected > -1){
+	/*if (selected > -1){
 		cx[selected] = mouseX;
 		cy[selected] = mouseY;
-	}
+	}*/
 }
 
 int main() {

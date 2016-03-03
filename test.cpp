@@ -6,6 +6,19 @@
 
 using namespace std;
 
+void make_standardKnotSeq_1()
+{
+	float expected[9] = {0,0,0,0.25,0.5,0.75,1,1,1};
+	float *actual = BSpline::standardKnotSeq(5, 3);
+
+	for (int i = 0; i < 9; i++)
+	{
+		if (expected[i] != actual[i])			
+			cout << "make_standardKnotSeq_1 fail\n";
+	}
+	cout << "make_standardKnotSeq_1 pass\n";
+}
+
 void bSplinePoint_Efficient_1()
 {
 	Point2D expected = Point2D(0, 0);
@@ -250,6 +263,7 @@ void indexFocus_1()
 
 Tests::Tests()
 {
+	make_standardKnotSeq_1();
 	bSplineBasis_1_1_0();
 	bSplineBasis_1_1_1();
 	bSplineBasis_1_2_1();

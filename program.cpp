@@ -2,9 +2,63 @@
 
 using namespace std;
 
+void Program::updateBSpline()
+{
+	Point2D *c = new Point2D[points.size()];
+	int m = points.size() - 1;
+
+	for (int i = 0; i < points.size(); i++)
+	{
+		c[i] = points[i];
+	}
+
+	spline.setControlPoints(m, c);
+	spline.setOrder(k);
+	float *knots = BSpline::standardKnotSeq(m, k);
+	spline.setKnots(knots);
+}
+
+void Program::getSplineLines()
+{
+	float u = 0;
+	float STEP = 0.05f;
+
+	splinePoints.clear();
+
+	if (points.size() <= 3)
+		return;
+
+	while (u < 1)
+	{
+		splinePoints.push_back(spline.bruteSum(u));
+		u += STEP;
+	}
+}
+
+void Program::mouseClick(int button, double mouseX, double mouseY)
+{
+	for (int i = 0; i < points.size(); i++){
+		if (abs(points[i].x - mouseX) <= selectDistance &&
+			abs(points[i].y - mouseY) <= selectDistance){
+			selected = i;
+		}
+	}
+	if (button == GLFW_MOUSE_BUTTON_LEFT && selected == -1){
+		points.push_back(Point2D(mouseX, mouseY));
+		updateBSpline();
+		getSplineLines();
+	}
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && selected > -1){
+		points.erase(points.begin() + selected);
+		selected = -1;
+	}
+}
+
 void Program::curve(float u)
 {
+
 }
+
 /* sums of B-Spline algo
 
 void what(int k, int m, E[], u[], u)

@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include "point2D.h"
 #include <vector>
+#include "bspline.h"
 
 using namespace std;
 
@@ -16,11 +17,17 @@ public:
 	void addPoint();
 	void curve(float u);
 	vector<Point2D> points;
+	vector<Point2D> splinePoints;
+	void mouseClick(int button, double mouseX, double mouseY);
 
 private:
-	int k;
-	float u;
-	int selected;
+	BSpline spline;
+	int selectDistance = 0.05;
+	int k = 3;
+	int selected = -1;
+
+	void updateBSpline();
+	void getSplineLines();
 };
 
 #endif
