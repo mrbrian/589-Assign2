@@ -10,7 +10,9 @@ LIBS += -L/usr/X11R6/lib -L/usr/X11R6/lib64 -L/usr/local/lib -lglfw -lGLU -lGL
 # Input
 HEADERS += point2D.h \
     program.h \
+    bspline.h \
     tests.h
 SOURCES += main.cpp \
     program.cpp \
+    bspline.cpp \
     test.cpp
