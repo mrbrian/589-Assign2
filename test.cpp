@@ -15,7 +15,7 @@ void program_getSplineLines_1()	// making a simple line..
 	float knots[5] = { 0, 0, 0.5, 1, 1 };
 	Point2D **actual = BSpline::getSplineLines(2, 2, pts, knots, 0.5);
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		if (!expected[i].equals(actual[i]))
 			cout << "program_getSplineLines_1 fail\n";
@@ -184,8 +184,8 @@ void bSplineBasis_1()
 {
     float expected = 1;
     float knots[4] = {0, 1, 2, 3};
-    double actual = BSpline::bSpline(1, 2, 2.1, knots);
-	actual += BSpline::bSpline(2, 2, 2.1, knots);
+	double actual = BSpline::bSplineBasis(1, 2, 2.1, knots);
+	actual += BSpline::bSplineBasis(2, 2, 2.1, knots);
 
     if (expected == actual)
         cout << "bSplineBasis_1 pass\n";
@@ -197,7 +197,7 @@ void bSplineBasis_2()
 {
 	float expected = 0.5;
 	float knots[3] = { 0, 1, 2 };
-	double actual = BSpline::bSpline(0, 2, 0.5, knots);
+	double actual = BSpline::bSplineBasis(0, 2, 0.5, knots);
 
 	if (expected == actual)
 		cout << "bSplineBasis_2 pass\n";
@@ -209,9 +209,9 @@ void bSplineBasis_1_2_1()
 {
 	float expected = 1;
 	float knots[6] = { 0, 0.33, 0.66, 1 };
-	double actual = BSpline::bSpline(0, 2, 0.75, knots);
-	actual += BSpline::bSpline(1, 2, 0.75, knots);
-	actual += BSpline::bSpline(2, 2, 0.75, knots);
+	double actual = BSpline::bSplineBasis(0, 2, 0.75, knots);
+	actual += BSpline::bSplineBasis(1, 2, 0.75, knots);
+	actual += BSpline::bSplineBasis(2, 2, 0.75, knots);
 
 	if (expected == actual)
 		cout << "bSplineBasis_1_2_1 pass\n";
@@ -223,9 +223,9 @@ void bSplineBasis_1_1_1()
 {
 	float expected = 1;
 	float knots[6] = { 0, 0.33, 0.66, 1 };
-	double actual = BSpline::bSpline(0, 1, 0.99, knots);
-	actual = BSpline::bSpline(1, 1, 0.999, knots);
-	actual = BSpline::bSpline(2, 1, 0.999, knots);
+	double actual = BSpline::bSplineBasis(0, 1, 0.99, knots);
+	actual = BSpline::bSplineBasis(1, 1, 0.999, knots);
+	actual = BSpline::bSplineBasis(2, 1, 0.999, knots);
 
 	if (expected == actual)
 		cout << "bSplineBasis_1_1_1 pass\n";
@@ -237,7 +237,7 @@ void bSplineBasis_1_1_0()
 {
 	float expected = 1;
 	float knots[6] = { 0, 0.33, 0.66, 1 };
-	double actual = BSpline::bSpline(0, 1, 0, knots);
+	double actual = BSpline::bSplineBasis(0, 1, 0, knots);
 
 	if (expected == actual)
 		cout << "bSplineBasis_1_1_0 pass\n";
@@ -249,8 +249,8 @@ void bSplineBasis_3()
 {
 	float expected = 1;
 	float knots[6] = { 0, 0, 0.33, 0.66, 1, 1 };
-	double actual = BSpline::bSpline(3, 2, 0.8, knots);
-	actual += BSpline::bSpline(2, 2, 0.8, knots);
+	double actual = BSpline::bSplineBasis(3, 2, 0.8, knots);
+	actual += BSpline::bSplineBasis(2, 2, 0.8, knots);
 
 	if (expected == actual)
 		cout << "bSplineBasis_3 pass\n";

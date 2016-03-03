@@ -25,7 +25,7 @@ void Program::getSplineLines()
 
 	splinePoints.clear();
 
-	if (points.size() <= 3)
+	if (points.size() < k)
 		return;
 
 	while (u < 1)
@@ -33,6 +33,11 @@ void Program::getSplineLines()
 		splinePoints.push_back(spline.bruteSum(u));
 		u += STEP;
 	}
+}
+
+int Program::getOrder()
+{
+	return k;
 }
 
 void Program::mouseClick(int button, double mouseX, double mouseY)
@@ -52,11 +57,6 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 		points.erase(points.begin() + selected);
 		selected = -1;
 	}
-}
-
-void Program::curve(float u)
-{
-
 }
 
 /* sums of B-Spline algo
@@ -105,3 +105,11 @@ void E_delta_1(k, m, u)
 					Output c[0]
 }
 */
+
+int Program::modifyOrder(int v)
+{
+	k += v;
+	updateBSpline();
+	getSplineLines();
+	return k;
+}

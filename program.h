@@ -15,10 +15,11 @@ public:
 
 	void render();
 	void addPoint();
-	void curve(float u);
 	vector<Point2D> points;
 	vector<Point2D> splinePoints;
 	void mouseClick(int button, double mouseX, double mouseY);
+	int modifyOrder(int v);
+	int getOrder();
 
 private:
 	BSpline spline;

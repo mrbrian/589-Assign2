@@ -31,16 +31,11 @@ void render() {
 	//Functions for changing transformation matrix
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	/*	glTranslatef (0.0f, 0.5f, 0.0f);
-	glRotatef (30.0f, 0.0f, 0.0f, 1.0f);
-	glScalef (2.0f, 2.0f, 2.0f); */
 
 	//Functions for changing projection matrix
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
-	//gluPerspective (fov, aspect ratio, near plane, far plane)
-	//glFrustum
 
 	glPointSize(5.0);
 	//We draw a line on the screen, which gets transformed by the modelview matrix
@@ -54,10 +49,7 @@ void render() {
 
 	glBegin(GL_LINE_STRIP); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
 	glColor3f(1.0f, 0.0f, 1.0f);
-	/*
-	glVertex2f(-1, 1);
-	glVertex2f(1, -1);
-	glVertex2f(0.51, 0.81);*/
+
 	for (int i = 0; i < prog.splinePoints.size(); i++)
 	{
 		glVertex2f(prog.splinePoints[i].x, prog.splinePoints[i].y);
@@ -67,8 +59,25 @@ void render() {
 
 
 void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
-	if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
-		cout << "A was pressed.\n";
+	if ((action == GLFW_PRESS || action == GLFW_REPEAT))
+		switch (key)
+	{
+		case GLFW_KEY_A:
+			cout << "A was pressed.\n";
+			break;
+		case GLFW_KEY_EQUAL:
+			prog.modifyOrder(1);
+			printf( "Spline order: %d\n", prog.getOrder());
+			break;
+		case GLFW_KEY_MINUS:
+			prog.modifyOrder(-1);
+			printf("Spline order: %d\n", prog.getOrder());
+			break;
+		case GLFW_KEY_ESCAPE:
+			printf("Exciting..\n");
+			glfwSetWindowShouldClose(window, GL_TRUE);
+			return;
+	}
 }
 
 void mouseClick(GLFWwindow *sender, int button, int action, int mods) {
@@ -88,7 +97,7 @@ void mousePos(GLFWwindow *sender, double x, double y) {
 	mouseX = (x / w) * 2 - 1;
 	mouseY = (y / h) * (-2) + 1;
 
-	/*if (selected > -1){
+	/*if (selected > -1){		
 		cx[selected] = mouseX;
 		cy[selected] = mouseY;
 	}*/

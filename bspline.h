@@ -35,6 +35,8 @@ public:
 	void setOrder(int in_k)
 	{
 		k = in_k;
+		if (k < 1)
+			k = 1;
 	}
 
 	void setKnots(float *U)
@@ -92,7 +94,8 @@ public:
 
 	static Point2D **getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize);
 	static float *standardKnotSeq(int m, int k);
-	static double bSpline(int i, int k, double u, float *knots);
+	static double bSplineBasis(int i, int m, int k, double u, float *knots);
+	static double bSplineBasis(int i, int k, double u, float *knots);
 	static Point2D bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots);
 };
 

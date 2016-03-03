@@ -11,7 +11,7 @@ Point2D **BSpline::getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, 
 		return 0;
 
 	int i = 0;
-	while (u < 1)
+	while (u <= 1)
 	{
 		Point2D p = BSpline::bruteSum(m, k, u, ctrlPts, knots);
 		result[i] = new Point2D(p.x, p.y);
@@ -27,7 +27,7 @@ Point2D BSpline::bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots)
 	Point2D s = Point2D(0, 0);
 	for (int i = 0; i <= m; i++)
 	{
-		double contrib = bSpline(i, k, u, knots);
+		double contrib = bSplineBasis(i, m, k, u, knots);
 		s = s + ctrlPts[i] * contrib;
 	}
 	return s;
@@ -47,14 +47,21 @@ float *BSpline::standardKnotSeq(int m, int k)
 		knots[i] = v;
 		v += step;
 	}
-	for (int i = m+1; i <= m + k; i++)
+	for (int i = m + 1; i <= m + k; i++)
 	{
 		knots[i] = 1;
 	}
 	return knots;
 }
 
-double BSpline::bSpline(int i, int k, double u, float *knots)
+double BSpline::bSplineBasis(int i, int m, int k, double u, float *knots)
+{
+	if (u >= knots[m + 1] && i >= m)
+		return 1;
+	return bSplineBasis(i, k, u, knots);
+}
+
+double BSpline::bSplineBasis(int i, int k, double u, float *knots)
 {
 	if (k <= 0)
 		return 0;
@@ -67,7 +74,7 @@ double BSpline::bSpline(int i, int k, double u, float *knots)
 	}
 	double denomA = knots[i + k - 1] - knots[i];
 	double denomB = knots[i + k] - knots[i + 1];
-	double a = denomA == 0 ? 0 : (u - knots[i]) / denomA * bSpline(i, k - 1, u, knots);
-	double b = denomB == 0 ? 0 : (knots[i + k] - u) / denomB * bSpline(i + 1, k - 1, u, knots);
+	double a = denomA == 0 ? 0 : (u - knots[i]) / denomA * bSplineBasis(i, k - 1, u, knots);
+	double b = denomB == 0 ? 0 : (knots[i + k] - u) / denomB * bSplineBasis(i + 1, k - 1, u, knots);
 	return (a + b);
 }
