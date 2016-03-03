@@ -43,11 +43,9 @@ public:
 		return *this;
 	}
 
-	Point2D& operator *(float f)
+	Point2D operator *(float f)
 	{
-		x *= f;
-		y *= f;
-		return *this;
+		return Point2D(x * f, y * f);
 	}
 
     float x;	// point coordinates

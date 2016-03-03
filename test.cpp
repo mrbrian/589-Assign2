@@ -3,13 +3,24 @@
 #include <stdio.h>
 #include <iostream>
 #include "point2D.h"
+#include "program.h"
 
 using namespace std;
 
-void program_getSplineLines_1()
+void program_getSplineLines_1()	// making a simple line..
 {
-	//Point2D *expected = Point2D[4]{};
-	//Point2D *actual = program
+	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+
+	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+	float knots[5] = { 0, 0, 0.5, 1, 1 };
+	Point2D **actual = BSpline::getSplineLines(2, 2, pts, knots, 0.5);
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "program_getSplineLines_1 fail\n";
+	}
+	cout << "program_getSplineLines_1 pass\n";
 }
 
 void make_standardKnotSeq_1()
@@ -269,6 +280,7 @@ void indexFocus_1()
 
 Tests::Tests()
 {
+	program_getSplineLines_1();
 	make_standardKnotSeq_1();
 	bSplineBasis_1_1_0();
 	bSplineBasis_1_1_1();

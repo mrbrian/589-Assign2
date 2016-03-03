@@ -3,6 +3,8 @@
 
 #include "point2D.h"
 
+using namespace std;
+
 class BSpline
 {
 public:
@@ -88,7 +90,8 @@ public:
 		return c[0];
 	}
 
-	static float *BSpline::standardKnotSeq(int m, int k);
+	static Point2D **getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize);
+	static float *standardKnotSeq(int m, int k);
 	static double bSpline(int i, int k, double u, float *knots);
 	static Point2D bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots);
 };

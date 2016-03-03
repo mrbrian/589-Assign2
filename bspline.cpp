@@ -1,5 +1,27 @@
 #include "bspline.h"
 
+Point2D **BSpline::getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize)
+{
+	float u = 0;
+	int numSteps = (int)(1.0f / stepSize);
+
+	Point2D **result = new Point2D*[numSteps];
+
+	if (m < 2)
+		return 0;
+
+	int i = 0;
+	while (u < 1)
+	{
+		Point2D p = BSpline::bruteSum(m, k, u, ctrlPts, knots);
+		result[i] = new Point2D(p.x, p.y);
+		u += stepSize;
+		i++;
+	}
+
+	return result;
+}
+
 Point2D BSpline::bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots)
 {
 	Point2D s = Point2D(0, 0);
