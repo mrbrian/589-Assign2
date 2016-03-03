@@ -66,12 +66,28 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 			cout << "A was pressed.\n";
 			break;
 		case GLFW_KEY_EQUAL:
-			prog.modifyOrder(1);
-			printf( "Spline order: %d\n", prog.getOrder());
-			break;
+			{
+				int k = prog.modifyOrder(1);
+				printf("Spline order: %d\n", k);
+			}
+			break; 
 		case GLFW_KEY_MINUS:
-			prog.modifyOrder(-1);
-			printf("Spline order: %d\n", prog.getOrder());
+			{
+				int k = prog.modifyOrder(-1);
+				printf("Spline order: %d\n", k);
+			}
+			break;
+		case GLFW_KEY_LEFT_BRACKET:
+			{
+				float s = prog.modifyStep(0.01);
+				printf("U Increment: %f\n", s);
+			}
+			break;
+		case GLFW_KEY_RIGHT_BRACKET:
+			{
+				float s = prog.modifyStep(-0.01);
+				printf("U Increment: %f\n", s);
+			}
 			break;
 		case GLFW_KEY_ESCAPE:
 			printf("Exciting..\n");

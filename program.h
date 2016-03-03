@@ -19,12 +19,14 @@ public:
 	vector<Point2D> splinePoints;
 	void mouseClick(int button, double mouseX, double mouseY);
 	int modifyOrder(int v);
+	float modifyStep(float v);
 	int getOrder();
 
 private:
 	BSpline spline;
 	int selectDistance = 0.05;
 	int k = 3;
+	float step_u = 0.01f;
 	int selected = -1;
 
 	void updateBSpline();

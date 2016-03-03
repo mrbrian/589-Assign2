@@ -92,11 +92,11 @@ public:
 		return c[0];
 	}
 
-	static Point2D **getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize);
 	static float *standardKnotSeq(int m, int k);
-	static double bSplineBasis(int i, int m, int k, double u, float *knots);
 	static double bSplineBasis(int i, int k, double u, float *knots);
+	static double bSplineBasis(int i, int m, int k, double u, float *knots);
 	static Point2D bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots);
+	static Point2D **getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize);
 };
 
 #endif

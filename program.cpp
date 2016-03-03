@@ -21,7 +21,6 @@ void Program::updateBSpline()
 void Program::getSplineLines()
 {
 	float u = 0;
-	float STEP = 0.01f;
 
 	splinePoints.clear();
 
@@ -31,7 +30,7 @@ void Program::getSplineLines()
 	while (u < 1)
 	{
 		splinePoints.push_back(spline.bruteSum(u));
-		u += STEP;
+		u += step_u;
 	}
 }
 
@@ -105,6 +104,18 @@ void E_delta_1(k, m, u)
 					Output c[0]
 }
 */
+
+float Program::modifyStep(float v)
+{
+	step_u += v;
+
+	if (step_u < 0.01f)
+		step_u = 0.01f;
+
+	updateBSpline();
+	getSplineLines();
+	return step_u;
+}
 
 int Program::modifyOrder(int v)
 {
