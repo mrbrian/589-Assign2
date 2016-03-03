@@ -13,14 +13,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "tests.h"
+#include "program.h"
 
 using namespace std;
 
+Program prog;
 GLFWwindow *window;
 int w, h;
 double mouseX, mouseY;
 
-vector<double> cx, cy;
 int selected = -1;
 int selectDistance = 0.05;
 
@@ -46,9 +47,9 @@ void render() {
 	//We draw a line on the screen, which gets transformed by the modelview matrix
 	glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
 	glColor3f(1.0f, 1.0f, 1.0f);
-	for (int i = 0; i < cx.size(); i++)
+	for (int i = 0; i < prog.points.size(); i++)
 	{
-		glVertex2f(cx[i], cy[i]);
+		glVertex2f(prog.points[i].x, prog.points[i].y);
 	}
 	glEnd();
 }

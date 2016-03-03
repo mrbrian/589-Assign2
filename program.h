@@ -15,14 +15,12 @@ public:
 	void render();
 	void addPoint();
 	void curve(float u);
+	vector<Point2D> points;
 
 private:
 	int k;
 	float u;
 	int selected;
-	vector<Point2D> points;
 };
-
-double bSpline(int i, int order, double u, float *knots);
 
 #endif

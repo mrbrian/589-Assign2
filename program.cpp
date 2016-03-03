@@ -32,19 +32,6 @@ void what(int k, int m, E[], u[], u)
 }
 */
 
-double bSpline(int i, int order, double u, float *knots)
-{
-    if (order == 1)
-    {
-        if (knots[i] <= u && u < knots[i+1])
-            return 1;
-        else
-            return 0;
-	}
-	double a = (1 - u) * bSpline(i, order - 1, u, knots);
-	double b = u * bSpline(i + 1, order - 1, u, knots);
-	return (a + b);
-}
 /*
  wheres this from  whats it do
 void E_delta_1(k, m, u)
