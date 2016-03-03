@@ -54,7 +54,10 @@ void render() {
 
 	glBegin(GL_LINE_STRIP); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
 	glColor3f(1.0f, 0.0f, 1.0f);
-
+	/*
+	glVertex2f(-1, 1);
+	glVertex2f(1, -1);
+	glVertex2f(0.51, 0.81);*/
 	for (int i = 0; i < prog.splinePoints.size(); i++)
 	{
 		glVertex2f(prog.splinePoints[i].x, prog.splinePoints[i].y);

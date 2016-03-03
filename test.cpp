@@ -6,6 +6,12 @@
 
 using namespace std;
 
+void program_getSplineLines_1()
+{
+	//Point2D *expected = Point2D[4]{};
+	//Point2D *actual = program
+}
+
 void make_standardKnotSeq_1()
 {
 	float expected[9] = {0,0,0,0.25,0.5,0.75,1,1,1};
@@ -276,7 +282,7 @@ Tests::Tests()
 	indexFocus_1();
 	bSplinePoint_2();
 	bSplinePoint_2a();
-	
+	program_getSplineLines_1();
 	// efficient algorithm
 	//	bSplinePoint_1();
 }

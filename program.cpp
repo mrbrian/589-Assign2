@@ -21,7 +21,7 @@ void Program::updateBSpline()
 void Program::getSplineLines()
 {
 	float u = 0;
-	float STEP = 0.05f;
+	float STEP = 0.01f;
 
 	splinePoints.clear();
 
