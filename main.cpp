@@ -81,9 +81,6 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 				printf("U Increment: %f\n", s);
 			}
 			break;
-		case GLFW_KEY_DELETE:
-			prog.deleteSelected();			
-			break;
 		case GLFW_KEY_RIGHT_BRACKET:
 		{
 			float s = prog.modifyStep(-0.01);
@@ -110,6 +107,11 @@ void mouseClick(GLFWwindow *sender, int button, int action, int mods) {
 		cout << mouseX << ' ' << mouseY << '\n';
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	prog.modifyOrder((int)yoffset);
+}
+
 void mousePos(GLFWwindow *sender, double x, double y) {
 	mouseX = (x / w) * 2 - 1;
 	mouseY = (y / h) * (-2) + 1;
@@ -129,6 +131,7 @@ int main() {
 
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, keyboard);
+	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetMouseButtonCallback(window, mouseClick);
 	glfwSetCursorPosCallback(window, mousePos);
 	while (!glfwWindowShouldClose(window)) {
