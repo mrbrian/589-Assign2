@@ -23,6 +23,22 @@ void program_getSplineLines_1()	// making a simple line..
 	cout << "program_getSplineLines_1 pass\n";
 }
 
+void program_getSplineLines_2()	// use the efficient index finding 
+{
+	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+
+	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+	float knots[5] = { 0, 0, 0.5, 1, 1 };
+	Point2D **actual = BSpline::getSplineLines(2, 2, pts, knots, 0.5);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "program_getSplineLines_1 fail\n";
+	}
+	cout << "program_getSplineLines_1 pass\n";
+}
+
 void make_standardKnotSeq_1()
 {
 	float expected[9] = {0,0,0,0.25,0.5,0.75,1,1,1};
@@ -40,11 +56,11 @@ void bSplinePoint_Efficient_1()
 {
 	Point2D expected = Point2D(0, 0);
 
-	float u = 0;
-	int m = 3;
+	float u = 0.5f;
+	int m = 2;
 	int k = 3;
-	Point2D pts[4] = { Point2D(0, 0), Point2D(0, 1), Point2D(1, 1), Point2D(1, 0) };
-	float knots[7] = { 0, 0, 0, 0.5, 1, 1, 1 };
+	Point2D pts[4] = { Point2D(-1, 1), Point2D(0, 0), Point2D(1, 1)};
+	float *knots = BSpline::standardKnotSeq(m, k);  // 0,0,0,1,1,1
 
 	//iterate
 	// generate a single bspline point
@@ -52,7 +68,8 @@ void bSplinePoint_Efficient_1()
 	bs.setControlPoints(m, pts);
 	bs.setKnots(knots);
 	bs.setOrder(k);
-	Point2D actual = bs.sum(u);// .getPoint(u);
+	int d = 2;
+	Point2D actual = bs.effSum(d, u);
 
 	if (expected.equals(&actual))
 		cout << "bSplinePoint_Efficient_1 pass\n";
@@ -76,7 +93,7 @@ void bSplinePoint_2()
 	bs.setControlPoints(m, pts);
 	bs.setKnots(knots);
 	bs.setOrder(k);
-	int actual = bs.getIndex(u);
+	int actual = bs.getIndexOfFocus(u);
 
 	if (expected == actual)
 		cout << "bSplinePoint_2 pass\n";
@@ -100,7 +117,7 @@ void bSplinePoint_2a()
 	bs.setControlPoints(m, pts);
 	bs.setKnots(knots);
 	bs.setOrder(k);
-	int actual = bs.getIndex(u);
+	int actual = bs.getIndexOfFocus(u);
 
 	if (expected == actual)
 		cout << "bSplinePoint_2a pass\n";
@@ -124,7 +141,7 @@ void bSplinePoint_2b()
 	bs.setControlPoints(m, pts);
 	bs.setKnots(knots);
 	bs.setOrder(k);
-	Point2D actual = bs.sum(u);
+	Point2D actual = bs.effSum(u);
 
 	if (expected.equals(&actual))
 		cout << "bSplinePoint_2b pass\n";
@@ -160,7 +177,7 @@ void bruteBSplinePoint_Tail()
 {
 	Point2D expected = Point2D(1, 0);
 
-	float u = 0.991;
+	float u = 1;
 	int m = 3;
 	int k = 3;
 	Point2D pts[4] = { Point2D(0, 0), Point2D(0, 1), Point2D(1, 1), Point2D(1, 0) };
@@ -270,7 +287,7 @@ void indexFocus_1()
 	bs.setControlPoints(3, pts);
 	bs.setKnots(knots);
 	
-	int actual = bs.getIndex(1.2);
+	int actual = bs.getIndexOfFocus(1.2);
 
     if (expected == actual)
         cout << "indexFocus_1 pass\n";
@@ -278,8 +295,31 @@ void indexFocus_1()
         cout << "indexFocus_1 fail\n";
 }
 
+void eff_bSplinePoint_1()
+{
+	BSpline bs;
+	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+	bs.setControlPoints(2, pts);
+
+	float *knots = BSpline::standardKnotSeq(2,3);
+	bs.setKnots(knots);
+	bs.setOrder(3);
+
+	Point2D expected = Point2D(1, 1);
+	Point2D actual = bs.effSum(0.5f);
+
+	if (expected.equals(&actual))
+		cout << "eff_bSplinePoint_1 pass\n";
+	else
+		cout << "eff_bSplinePoint_1 fail\n";
+}
+
 Tests::Tests()
 {
+	// efficient algorithm
+	eff_bSplinePoint_1();
+	bSplinePoint_Efficient_1();
+
 	program_getSplineLines_1();
 	make_standardKnotSeq_1();
 	bSplineBasis_1_1_0();
@@ -287,7 +327,7 @@ Tests::Tests()
 	bSplineBasis_1_2_1();
 	bSplineBasis_3();
 	bruteBSplinePoint_Head();
-//	bruteBSplinePoint_Tail();
+	bruteBSplinePoint_Tail();
 	bSplinePoint_2b();
     bSplineBasis_1();
     bSplineBasis_2();
@@ -295,6 +335,4 @@ Tests::Tests()
 	bSplinePoint_2();
 	bSplinePoint_2a();
 	program_getSplineLines_1();
-	// efficient algorithm
-	//	bSplinePoint_1();
 }

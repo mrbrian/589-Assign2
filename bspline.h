@@ -8,11 +8,6 @@ using namespace std;
 class BSpline
 {
 public:
-	Point2D *ctrlPts;
-	float *knots;
-	int k;
-	int m;
-
 	Point2D getPoint(float u)
 	{
 		float x = 0;
@@ -44,7 +39,7 @@ public:
 		knots = U;
 	}
 
-	int getIndex(float u)
+	int getIndexOfFocus(float u)
 	{
 		int i = 0;
 		for (i = 0; i < m + k; i++)
@@ -62,7 +57,13 @@ public:
 		return bruteSum(m, k, u, ctrlPts, knots);
 	}
 
-	Point2D sum(float u)
+	Point2D effSum(float u)
+	{
+		int d = getIndexOfFocus(u);
+		return effSum(d, u);
+	}
+
+	Point2D effSum(int d, float u)
 	{
 		//Input k, m, E[], u[], u
 		//k: order of B-spline
@@ -71,8 +72,6 @@ public:
 		//u[ ]: knot sequence
 		//u: fixed parameter value
 
-		int d = getIndex(u);
-		d = 3;
 		Point2D *c = new Point2D[k];
 		for (int i = 0; i <= k - 1; i++)
 		{
@@ -97,6 +96,12 @@ public:
 	static double bSplineBasis(int i, int m, int k, double u, float *knots);
 	static Point2D bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots);
 	static Point2D **getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize);
+
+private:
+	Point2D *ctrlPts;
+	float *knots;
+	int k;
+	int m;
 };
 
 #endif
