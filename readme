@@ -3,21 +3,31 @@ Brian Yee
 00993104
 T01
 
+
+//• User control of the curve’s order (k).
+• User control of the parameter increment (u).
+should 
+//• Users should be able to add, move, and delete control points through mouse interaction.
+//• Implement the efficient B-spline algorithm discussed in the lectures.
+//• Use the standard knot sequence.
+• Include an option to demonstrate the algorithm in a geometric fashion.
+• (Bonus 1, 20 marks) Extend your program to implement NURBS. This includes creating a
+good interface for displaying and changing weights.
+• (Bonus 2, 20 marks ) Extend your program to allow the user control of knot spacing and
+multiple knots. This will mean showing the basis curves in parameter space as well as the
+knot positions. In addition, an option to control sharp control points is required. For this
+option, it is enough to use a multiple knot for the indicated control points.
+• (Bonus 3, 20 marks) Extend your program to implement surfaces of revolution based on your
+B-spline curves.
+
 Keyboard controls:
 
-	SPACE 		- toggle animation
-	LEFT ARROW 	- shrink radius of inner circle  (>0 minimum)
-	RIGHT ARROW - grow radius of inner circle	(outer circle radius is max)
-	UP ARROW 	- grow radius of outer circle
-	DOWN ARROW 	- shrink radius of outer circle  (inner circle radius is min)
-	A			- rotate counter-clockwise
-	D			- rotate clockwise
-	W			- increase scale 
-	S			- decrease scale  (0 minimum)
-
-	+			- increase order k
-	-			- decrease order k (1 minimum)
-
+	LEFT CLICK	- add control point / select control point
+	RIGHT CLICK	- delete control point
+	MOUSESCROLL	- increase/decrease curve order k
+	
+	SPACE 		- toggle geometric display
+	
 	ESCAPE		- exit program
 	
 User can press and hold keys to modify the hypocycloid values.  

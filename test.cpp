@@ -7,6 +7,22 @@
 
 using namespace std;
 
+void geometric_1()	// making a simple line..
+{
+	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+
+	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+	float knots[5] = { 0, 0, 0.5, 1, 1 };
+	Point2D **actual = BSpline::getSplineLines(2, 2, pts, knots, 0.5);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "program_getSplineLines_1 fail\n";
+	}
+	cout << "program_getSplineLines_1 pass\n";
+}
+
 void program_getSplineLines_1()	// making a simple line..
 {
 	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };

@@ -59,7 +59,6 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 		updateBSpline();
 		selected = -1;
 	}
-	
 }
 
 float Program::modifyStep(float v)
