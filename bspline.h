@@ -2,6 +2,7 @@
 #define BSPLINE_H
 
 #include "point2D.h"
+#include <vector>
 
 using namespace std;
 
@@ -90,6 +91,37 @@ public:
 		}
 		return c[0];
 	}
+
+	/*
+	static Point2D effSum(int m, int k, int d, float u, Point2D *ctrlPts, float *knots)
+	{
+		//Input k, m, E[], u[], u
+		//k: order of B-spline
+		//m: number of control points
+		//E[ ]: coefficient vector( can be x[ ], y[ ], z[ ] of the control points
+		//u[ ]: knot sequence
+		//u: fixed parameter value
+
+		Point2D *c = new Point2D[k];
+		for (int i = 0; i <= k - 1; i++)
+		{
+			c[i] = ctrlPts[d - i]; //nonzero coefficients
+		}
+		int step = 0;
+		for (int r = k; r >= 2; r--)
+		{
+			int i = d;
+			for (int s = 0; s <= r - 2; s++)
+			{
+				float omega = (u - knots[i]) / (knots[i + r - 1] - knots[i]);
+				c[s] = c[s] * omega + c[s + 1] * (1 - omega);
+				i = i - 1;
+			}
+		}
+		return c[0];
+	}*/
+
+	void getLinePoints(vector<Point2D> *result, float step_u);
 
 	static float *standardKnotSeq(int m, int k);
 	static double bSplineBasis(int i, int k, double u, float *knots);

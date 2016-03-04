@@ -23,7 +23,7 @@ void program_getSplineLines_1()	// making a simple line..
 	cout << "program_getSplineLines_1 pass\n";
 }
 
-void program_getSplineLines_2()	// use the efficient index finding 
+void eff_program_getSplineLines_2()	// use the efficient index finding 
 {
 	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
 
@@ -319,6 +319,7 @@ Tests::Tests()
 	// efficient algorithm
 	eff_bSplinePoint_1();
 	bSplinePoint_Efficient_1();
+	eff_program_getSplineLines_2();
 
 	program_getSplineLines_1();
 	make_standardKnotSeq_1();

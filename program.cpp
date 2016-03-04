@@ -20,18 +20,7 @@ void Program::updateBSpline()
 
 void Program::getSplineLines()
 {
-	float u = 0;
-
-	splinePoints.clear();
-
-	if (points.size() < k)
-		return;
-
-	while (u < 1)
-	{
-		splinePoints.push_back(spline.bruteSum(u));
-		u += step_u;
-	}
+	spline.getLinePoints(&splinePoints, step_u);
 }
 
 int Program::getOrder()

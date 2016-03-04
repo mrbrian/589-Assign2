@@ -1,5 +1,24 @@
 #include "bspline.h"
 
+void BSpline::getLinePoints(vector<Point2D> *list, float step_u)
+{
+	list->clear();
+
+	float u = 0;
+
+	if (m + 1 < k)
+		return;
+	int d = 0;
+	while (u <= 1)
+	{
+		while (u >= knots[d + 1] && d < m + k)
+			d++;
+
+		list->push_back(effSum(d, u));
+		u += step_u;
+	}
+}
+
 Point2D **BSpline::getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize)
 {
 	float u = 0;
@@ -9,11 +28,20 @@ Point2D **BSpline::getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, 
 
 	if (m < 2)
 		return 0;
-
+	BSpline bs;
+	bs.setControlPoints(m, ctrlPts);
+	bs.setKnots(knots);
+	bs.setOrder(k);
+	
 	int i = 0;
+	int d = 0;
 	while (u <= 1)
 	{
-		Point2D p = BSpline::bruteSum(m, k, u, ctrlPts, knots);
+		while (u >= knots[d + 1] && d < m + k)
+			d++;
+
+		//Point2D p = BSpline::bruteSum(m, k, u, ctrlPts, knots);
+		Point2D p = bs.effSum(d, u);
 		result[i] = new Point2D(p.x, p.y);
 		u += stepSize;
 		i++;
