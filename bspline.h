@@ -28,6 +28,11 @@ public:
 		ctrlPts = p;
 	}
 
+	int getOrder()
+	{
+		return k;
+	}
+
 	void setOrder(int in_k)
 	{
 		k = in_k;

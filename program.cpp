@@ -13,9 +13,10 @@ void Program::updateBSpline()
 	}
 
 	spline.setControlPoints(m, c);
-	spline.setOrder(k);
-	float *knots = BSpline::standardKnotSeq(m, k);
+	float *knots = BSpline::standardKnotSeq(m, order);
 	spline.setKnots(knots);
+	spline.setOrder(order);
+	getSplineLines();
 }
 
 void Program::getSplineLines()
@@ -23,9 +24,21 @@ void Program::getSplineLines()
 	spline.getLinePoints(&splinePoints, step_u);
 }
 
-int Program::getOrder()
+void Program::mouseRelease()
 {
-	return k;
+	selected = -1;
+}
+
+void Program::mouseDrag(double mouseX, double mouseY)
+{
+	if (selected < 0)// || selected > m)
+		return;
+	Point2D &p = points[selected];
+
+	cout << p.x << "\n";
+	p.x = mouseX;
+	p.y = mouseY;
+	updateBSpline();
 }
 
 void Program::mouseClick(int button, double mouseX, double mouseY)
@@ -37,9 +50,9 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 		}
 	}
 	if (button == GLFW_MOUSE_BUTTON_LEFT && selected == -1){
+		selected = points.size();
 		points.push_back(Point2D(mouseX, mouseY));
 		updateBSpline();
-		getSplineLines();
 	}
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && selected > -1){
 		points.erase(points.begin() + selected);
@@ -102,14 +115,12 @@ float Program::modifyStep(float v)
 		step_u = 0.01f;
 
 	updateBSpline();
-	getSplineLines();
 	return step_u;
 }
 
 int Program::modifyOrder(int v)
-{
-	k += v;
+{	
+	order += v;
 	updateBSpline();
-	getSplineLines();
-	return k;
+	return order;
 }

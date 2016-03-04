@@ -22,8 +22,6 @@ GLFWwindow *window;
 int w, h;
 double mouseX, mouseY;
 
-int selected = -1;
-
 void render() {
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -102,7 +100,7 @@ void mouseClick(GLFWwindow *sender, int button, int action, int mods) {
 	}
 
 	if (action == GLFW_RELEASE){
-		selected = -1;
+		prog.mouseRelease();
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
@@ -113,10 +111,7 @@ void mousePos(GLFWwindow *sender, double x, double y) {
 	mouseX = (x / w) * 2 - 1;
 	mouseY = (y / h) * (-2) + 1;
 
-	/*if (selected > -1){		
-		cx[selected] = mouseX;
-		cy[selected] = mouseY;
-	}*/
+	prog.mouseDrag(mouseX, mouseY);	
 }
 
 int main() {
