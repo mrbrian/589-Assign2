@@ -12,10 +12,9 @@ using namespace std;
 class Program
 {
 public:
-	enum State { NORMAL, ADD, DEL, MOV };
-
 	void render();
 	void addPoint();
+	void deleteSelected();
 	vector<Point2D> points;
 	vector<Point2D> splinePoints;
 	void mouseClick(int button, double mouseX, double mouseY);

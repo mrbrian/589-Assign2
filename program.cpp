@@ -19,6 +19,13 @@ void Program::updateBSpline()
 	getSplineLines();
 }
 
+void Program::deleteSelected()
+{
+	if (selected > 0)
+		points.erase(points.begin() + selected);
+	updateBSpline();
+}
+
 void Program::getSplineLines()
 {
 	spline.getLinePoints(&splinePoints, step_u);

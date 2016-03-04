@@ -81,11 +81,14 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 				printf("U Increment: %f\n", s);
 			}
 			break;
+		case GLFW_KEY_DELETE:
+			prog.deleteSelected();			
+			break;
 		case GLFW_KEY_RIGHT_BRACKET:
-			{
-				float s = prog.modifyStep(-0.01);
-				printf("U Increment: %f\n", s);
-			}
+		{
+			float s = prog.modifyStep(-0.01);
+			printf("U Increment: %f\n", s);
+		}
 			break;
 		case GLFW_KEY_ESCAPE:
 			printf("Exciting..\n");
