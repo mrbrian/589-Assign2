@@ -48,13 +48,13 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods)
 		case GLFW_KEY_A:
 			cout << "A was pressed.\n";
 			break;
-		case GLFW_KEY_MINUS:
+		case GLFW_KEY_MINUS:		// change curve step increment
 			prog.modifyStep(0.01);
 			break;
-		case GLFW_KEY_EQUAL:
+		case GLFW_KEY_EQUAL:		// change curve step increment
 			prog.modifyStep(-0.01);
 			break;
-		case GLFW_KEY_N:
+		case GLFW_KEY_N:			// toggle between nurbs or b-spline curve
 			prog.toggleNurbs();
 			break;
 		case GLFW_KEY_ESCAPE:
@@ -104,10 +104,13 @@ int main()
 	printf("CPSC589 Assignment2\n");
 
 	glfwMakeContextCurrent(window);
+	
+	// mouse/keyboard input callbacks
 	glfwSetKeyCallback(window, keyboard);
-	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetScrollCallback(window, scroll_callback);		
 	glfwSetMouseButtonCallback(window, mouseClick);
 	glfwSetCursorPosCallback(window, mousePos);
+
 	while (!glfwWindowShouldClose(window)) 
 	{
 		glfwGetFramebufferSize(window, &w, &h);

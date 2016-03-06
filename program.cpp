@@ -4,19 +4,14 @@ using namespace std;
 
 Program::Program()
 {
-	curve = &spline;	// default mode is bspline, so point at the BSpline
-	nurbs.setWeights(&weights);		// link the NURBS curve weights to the program weight list
-}
-
-void Program::updateCurveCtrlPoints()
-{
-	int m = ctrlPts.size() - 1;
-	curve->setControlPoints(m, &ctrlPts);
+	curve = &spline;					// default mode is bspline, so point at the BSpline
+	spline.setControlPoints(&ctrlPts);	// set spline control points to program point list
+	nurbs.setWeights(&weights);			// set the NURBS curve weights to the program weight list
+	nurbs.setControlPoints(&ctrlPts);	// set the NURBS control points to the program point list
 }
 
 void Program::updateCurve()
 {
-	updateCurveCtrlPoints();
 	int m = ctrlPts.size() - 1;
 	float *knots = BSpline::standardKnotSeq(m, order);
 	curve->setKnots(knots);
@@ -80,20 +75,21 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 			abs((*ctrlPts[i]).y - mouseY) <= selectDistance)
 		{
 			state = State::NORMAL;		// reset to normal state
-			activeIdx = i;				
+			activeIdx = i;
+			selectedIdx = activeIdx;	// update the selected point index 
 			break;
 		}
 	}
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT)
 	{
-		selectedIdx = activeIdx;		// update the selected point index here (dont include the below curve points in the selected idx)
 		if (activeIdx == -1)
 		{
 			if (!selectCurvePoint(mouseX, mouseY))		// if the curve wasn't clicked..
 			{
 				state = State::NORMAL;
 				activeIdx = ctrlPts.size();							// currently mousedown over the newest control point
+				selectedIdx = activeIdx;							// update the selected point index 
 				ctrlPts.push_back(new Point2D(mouseX, mouseY));		// add a new control point
 				weights.push_back(1);								// with an associated weight of 1
 				updateCurve();										// update curve display
@@ -133,6 +129,7 @@ void Program::modifyStep(float v)
 	updateCurve();
 }
 
+// switch between NURBS or BSpline curve
 bool Program::toggleNurbs()
 {
 	nurbs_on = !nurbs_on;
@@ -161,11 +158,11 @@ void Program::modifyWeight(float v)
 	int idx = selectedIdx;
 	float &w = weights[idx];
 	w += v;
-	if (w < 0)		// clamp 0 <= weight 
+	if (w < 0)			// dont allow negative weight
 		w = 0;
 
 	printf("NURBS weight: %f\n", w);
-	updateCurve();
+	updateCurve();		// update final curve
 }
 
 int Program::modifyOrder(int v)
@@ -179,18 +176,19 @@ int Program::modifyOrder(int v)
 	return order;
 }
 
+/*	Render the points of the NURBS curve */
 void Program::renderPoints_NURBS()
 {
-	for (int i = 0; i < ctrlPts.size(); i++)
+	for (int i = 0; i < ctrlPts.size(); i++)	// for each point
 	{
 		float psize = fmax(2, weights[i] * 2);
 		if (selectedIdx == i)
 			psize += 1;
 
-		glPointSize(psize);
+		glPointSize(psize);			// set the size of the point (according to weight)
 		glBegin(GL_POINTS);
 
-		if (selectedIdx == i)
+		if (selectedIdx == i)		// set point color (white = selected, green otherwise)
 			glColor3f(1, 1, 1);
 		else
 			glColor3f(0.0f, 1.0f, 0.0f);
@@ -200,17 +198,18 @@ void Program::renderPoints_NURBS()
 	}
 }
 
+/*	Render the points of the BSpline curve */
 void Program::renderPoints_BSpline()
 {
-	glPointSize(5.0);
+	glPointSize(5.0);		// all points are the same size
 	glBegin(GL_POINTS);
 
-	for (int i = 0; i < ctrlPts.size(); i++)
+	for (int i = 0; i < ctrlPts.size(); i++)		// for each point
 	{
 		if (selectedIdx == i)
-			glColor3f(1, 1, 1);
+			glColor3f(1, 1, 1);		// selected point = white 
 		else
-			glColor3f(1, 0, 1);
+			glColor3f(1, 0, 1);		// otherwise magenta 
 
 		glVertex2f((*ctrlPts[i]).x, (*ctrlPts[i]).y);
 	}

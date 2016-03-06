@@ -50,7 +50,6 @@ private:
 	float step_u = 0.01f;			// step increment of u
 	float selectDistance = 0.05;	// distance threshold for point selection
 
-	void updateCurveCtrlPoints();	// update the control points of the curve
 	void updateCurve();				// update the render points for the curve
 	bool selectCurvePoint(double mouseX, double mouseY);	// if within range, select a point on the curve.  TRUE = a point was selected
 };
