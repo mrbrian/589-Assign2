@@ -48,11 +48,20 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods)
 		case GLFW_KEY_A:
 			cout << "A was pressed.\n";
 			break;
+		case GLFW_KEY_SPACE:		// manually enter step increment
+			double step;
+			printf("Current step increment: %f\nEnter new step increment: \n", prog.getStep());
+			cin >> step;
+			prog.modifyStep(step, false);
+			break;
 		case GLFW_KEY_MINUS:		// change curve step increment
-			prog.modifyStep(0.01);
+			prog.modifyStep(0.01, true);
 			break;
 		case GLFW_KEY_EQUAL:		// change curve step increment
-			prog.modifyStep(-0.01);
+			prog.modifyStep(-0.01, true);
+			break;
+		case GLFW_KEY_C:			// toggle between nurbs or b-spline curve
+			prog.clear();
 			break;
 		case GLFW_KEY_N:			// toggle between nurbs or b-spline curve
 			prog.toggleNurbs();
@@ -97,7 +106,7 @@ int main()
 	if (!glfwInit())
 		return 1;
 
-	window = glfwCreateWindow(640, 480, "My Window", NULL, NULL);
+	window = glfwCreateWindow(800, 600, "My Window", NULL, NULL);
 	if (!window)
 		return 1;
 

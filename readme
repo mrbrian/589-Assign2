@@ -14,8 +14,10 @@ Keyboard controls:
 	                            - modify weight of selected NURBS point
 	
 	MOUSESCROLL	UP/DOWN         - increase/decrease curve order k
+	C                           - delete all control points
 	N                           - toggle NURBS	
 	-/+	                        - increase/decrease step increment
+	SPACE						- numerically enter a step increment value into the console window
 	ESCAPE		                - exit program
 	
 Bonus:  implemented NURBS 

@@ -2,6 +2,8 @@
 
 using namespace std;
 
+#define STEP_MIN 0.000001f
+
 Program::Program()
 {
 	curve = &spline;					// default mode is bspline, so point at the BSpline
@@ -13,39 +15,46 @@ Program::Program()
 void Program::updateCurve()
 {
 	int m = ctrlPts.size() - 1;
-	float *knots = BSpline::standardKnotSeq(m, order);
-	curve->setKnots(knots);
-	curve->setOrder(order);
-	curve->getLinePoints(&splinePts, &splinePts_u, step_u);
+	float *knots = BSpline::standardKnotSeq(m, order);	// get standard knot sequence
+	curve->setKnots(knots);								// update the standard knot sequence
+	curve->setOrder(order);								// update curve k
+	curve->getLinePoints(&splinePts, &splinePts_u, step_u);		// update list of points to render
 }
 
 void Program::mouseRelease()
 {
-	state = State::NORMAL;
-	activeIdx = -1;
+	state = State::NORMAL;		// go back to normal state
+	activeIdx = -1;				// released, so no longer mousedown on a point  (not active)
 }
 
 void Program::mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY)
 {
 	double dx = newMouseX - mouseX;
 	
-	if (state == State::WEIGHT && selectedIdx != -1)
+	if (state == State::WEIGHT && selectedIdx != -1)	// weight editing state 
 	{
-		modifyWeight(dx);
+		modifyWeight(dx);					// change the NURBS point weight
 		return;
 	}
-	if (state == State::ON_CURVE)
+	if (state == State::ON_CURVE)			// we are holding the mouse down on the curve (geometric display)
 	{
-		selectCurvePoint(mouseX, mouseY);
+		selectCurvePoint(mouseX, mouseY);	// keep selecting points on the curve
 		return;
 	}
 
-	if (activeIdx < 0)
+	if (activeIdx < 0)					// if we are holding mousedown on a point
 		return;
-	Point2D &p = *ctrlPts[activeIdx];
 
+	Point2D &p = *ctrlPts[activeIdx];	// update the position of the control point
 	p.x = mouseX;
 	p.y = mouseY;
+	updateCurve();
+}
+
+void Program::clear()
+{
+	ctrlPts.clear();
+	weights.clear();	
 	updateCurve();
 }
 
@@ -53,8 +62,8 @@ bool Program::selectCurvePoint(double mouseX, double mouseY)
 {
 	for (int i = 0; i < splinePts.size(); i++)	// for all points on the curve in our rendered list
 	{
-		if (abs((*splinePts[i]).x - mouseX) <= selectDistance &&	// if within range..
-			abs((*splinePts[i]).y - mouseY) <= selectDistance)
+		if (fabs((*splinePts[i]).x - mouseX) <= selectDistance &&	// if within range..
+			fabs((*splinePts[i]).y - mouseY) <= selectDistance)
 		{
 			state = State::ON_CURVE;					// switch to curve touching state 
 			float u = splinePts_u[i];					// get the associated u of that curve point
@@ -71,8 +80,8 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 {
 	for (int i = 0; i < ctrlPts.size(); i++)	// scan all control points
 	{
-		if (abs((*ctrlPts[i]).x - mouseX) <= selectDistance &&		// if distance within the threshold
-			abs((*ctrlPts[i]).y - mouseY) <= selectDistance)
+		if (fabs((*ctrlPts[i]).x - mouseX) <= selectDistance &&		// if distance within the threshold
+			fabs((*ctrlPts[i]).y - mouseY) <= selectDistance)
 		{
 			state = State::NORMAL;		// reset to normal state
 			activeIdx = i;
@@ -114,14 +123,18 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 	}
 }
 
-void Program::modifyStep(float v)
+/* Set or Modify the curve step increment, step_u */
+void Program::modifyStep(float v, bool relative)
 {
-	step_u += v;
+	if (!relative)		// if not relative
+		step_u = v;		// set value
+	else
+		step_u += v;	// else.. add it
 
-	printf("U Step Increment: %f\n", v);
+	printf("U Step Increment: %f\n", step_u);
 
-	if (step_u < 0.01f)
-		step_u = 0.01f;
+	if (step_u < STEP_MIN)		// dont allow zero
+		step_u = STEP_MIN;
 
 	if (step_u > 1)
 		step_u = 1;
@@ -263,4 +276,9 @@ void Program::render()
 	// Geometric display  (bspline only)
 	if (!nurbs_on && state == Program::State::ON_CURVE)
 		renderGeometric();
+}
+
+float Program::getStep()
+{
+	return step_u;
 }

@@ -6,6 +6,7 @@
 #include "bspline.h"
 #include "nurbs.h"
 #include <vector>
+#include <math.h>
 #include <iostream>
 
 using namespace std;
@@ -34,13 +35,15 @@ public:
 	vector<Point2D*> convexPts;		// the lines between the control points with some influence
 	vector<float> weights;			// NURBS control point weight list
 
+	void clear();
 	void mouseClick(int button, double mouseX, double mouseY);							// process mouse clicks
 	void mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY);	// handle points dragging or editing NURBS weights
 	void mouseRelease();			// just resets the program state to NORMAL
 	int modifyOrder(int v);			// modfifier: clamps 2 <= order 
-	void modifyStep(float v);		// modifier: clamps 0.01 <= step <= 1 
 	void modifyWeight(float v);		// modifier: clamps 0 <= weight 
+	void modifyStep(float v, bool rel);		// modifier: clamps 0.01 <= step <= 1 
 	bool toggleNurbs();				// switch between displaying the nurbs/bspline curve
+	float getStep();					// getter
 
 private:
 	Nurbs nurbs;					// nurbs object
