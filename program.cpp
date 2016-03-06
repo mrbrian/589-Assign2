@@ -2,7 +2,7 @@
 
 using namespace std;
 
-#define STEP_MIN 0.000001f
+#define STEP_MIN 0.00001f				// minimum curve step increment
 
 Program::Program()
 {
@@ -12,19 +12,20 @@ Program::Program()
 	nurbs.setControlPoints(&ctrlPts);	// set the NURBS control points to the program point list
 }
 
+/*	Update the list of curve points for rendering */
 void Program::updateCurve()
 {
 	int m = ctrlPts.size() - 1;
 	float *knots = BSpline::standardKnotSeq(m, order);
 	curve->setKnots(knots);
 	curve->setOrder(order);
-	curve->getLinePoints(&splinePts, &splinePts_u, step_u);
+	curve->getLinePoints(&splinePts, &splinePts_u, step_u);		// evaluate and store the final curve points
 }
 
 void Program::mouseRelease()
 {
-	state = State::NORMAL;
-	activeIdx = -1;
+	state = State::NORMAL;		// reset the state
+	activeIdx = -1;				// indicate we are not holding the mouse button down on a point (not active)
 }
 
 void Program::mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY)
@@ -33,31 +34,33 @@ void Program::mouseDrag(double mouseX, double mouseY, double newMouseX, double n
 	
 	if (state == State::WEIGHT && selectedIdx != -1)
 	{
-		modifyWeight(dx);
+		modifyWeight(dx);		// modify NURBS weight
 		return;
 	}
-	if (state == State::ON_CURVE)
+	if (state == State::ON_CURVE)			// if we touched the curve (showing geometric display)
 	{
-		selectCurvePoint(mouseX, mouseY);
+		selectCurvePoint(mouseX, mouseY);	// keep selecting another point on the curve near mouse cursor
 		return;
 	}
 
-	if (activeIdx < 0)
+	if (activeIdx < 0)		// exit if not mouseclicked on a control point
 		return;
-	Point2D &p = *ctrlPts[activeIdx];
+	Point2D &p = *ctrlPts[activeIdx];		
 
-	p.x = mouseX;
+	p.x = mouseX;			// move the control point
 	p.y = mouseY;
-	updateCurve();
+	updateCurve();			// update curve render
 }
 
+/*	Clear all control points */
 void Program::clear()
 {
 	ctrlPts.clear();
-	weights.clear();	
-	updateCurve();
+	weights.clear();	// clear
+	updateCurve();		// update render
 }
 
+/*	See if mouse position is near a point on the curve, and if so, select it  */
 bool Program::selectCurvePoint(double mouseX, double mouseY)
 {
 	for (int i = 0; i < splinePts.size(); i++)	// for all points on the curve in our rendered list
@@ -105,20 +108,20 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 			}
 		}
 	}
-	if (button == GLFW_MOUSE_BUTTON_RIGHT)
+	if (button == GLFW_MOUSE_BUTTON_RIGHT)			// right button: delete or modify nurbs weight
 	{
-		if (activeIdx != -1)
+		if (activeIdx != -1)	// right mousedown on a control point = delete it
 		{
 			state = State::NORMAL;
-			ctrlPts.erase(ctrlPts.begin() + activeIdx);
+			ctrlPts.erase(ctrlPts.begin() + activeIdx);		// remove point and associated weight
 			weights.erase(weights.begin() + activeIdx);
 			activeIdx = -1;
 			selectedIdx = activeIdx;
-			updateCurve();
+			updateCurve();					// update curve render 
 		}
 		else
-		{
-			state = State::WEIGHT;
+		{									// right clicked on empty space
+			state = State::WEIGHT;			// go into weight edit state
 		}
 	}
 }
@@ -169,7 +172,7 @@ void Program::modifyWeight(float v)
 		return;
 	}
 	int idx = selectedIdx;
-	float &w = weights[idx];
+	float &w = weights[idx];	// modify the weight of the selected index
 	w += v;
 	if (w < 0)			// dont allow negative weight
 		w = 0;
@@ -185,7 +188,7 @@ int Program::modifyOrder(int v)
 		order = 2;
 
 	printf("Spline order: %d\n", order);
-	updateCurve();
+	updateCurve();		// update curve render 
 	return order;
 }
 
@@ -195,7 +198,7 @@ void Program::renderPoints_NURBS()
 	for (int i = 0; i < ctrlPts.size(); i++)	// for each point
 	{
 		float psize = fmax(2, weights[i] * 2);
-		if (selectedIdx == i)
+		if (selectedIdx == i)		// make selected vert a lil bigger
 			psize += 1;
 
 		glPointSize(psize);			// set the size of the point (according to weight)
@@ -217,7 +220,7 @@ void Program::renderPoints_BSpline()
 	glPointSize(5.0);		// all points are the same size
 	glBegin(GL_POINTS);
 
-	for (int i = 0; i < ctrlPts.size(); i++)		// for each point
+	for (int i = 0; i < ctrlPts.size(); i++)	// for each point
 	{
 		if (selectedIdx == i)
 			glColor3f(1, 1, 1);		// selected point = white 
@@ -229,25 +232,24 @@ void Program::renderPoints_BSpline()
 	glEnd();
 }
 
+/* Render the geometric lines showing de Boors algorithm */
 void Program::renderGeometric()
 {
+	// draw the geometric lines
 	glBegin(GL_LINES);
 	glColor3f(1.0f, 1.0f, 0.0f);
-
 	for (int i = 0; i < geoPts.size() - 1; i++)
-	{
 		glVertex2f((*geoPts[i]).x, (*geoPts[i]).y);
-	}
 	glEnd();
 
+	// draw the convex hull lines
 	glBegin(GL_LINE_STRIP);
 	glColor3f(1.0f, 0.0f, 0.0f);
 	for (int i = 0; i < convexPts.size(); i++)
-	{
 		glVertex2f((*convexPts[i]).x, (*convexPts[i]).y);
-	}
 	glEnd();
 
+	// draw the final curve intersection point
 	int idx = geoPts.size() - 1;
 	glBegin(GL_POINTS);
 	glColor3f(1.0f, 1.0f, 0.0f);
@@ -255,6 +257,7 @@ void Program::renderGeometric()
 	glEnd();
 }
 
+/*	Render the NURBS/BSpline curve */
 void Program::render()
 {
 	// Render the control points
@@ -278,6 +281,7 @@ void Program::render()
 		renderGeometric();
 }
 
+// getter
 float Program::getStep()
 {
 	return step_u;
