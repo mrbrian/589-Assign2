@@ -3,39 +3,40 @@
 
 #include <GLFW/glfw3.h>
 
-class Point2D	// your basic Point3D class
+class Point2D	// basic Point3D class
 {
 public:
-    bool equals(Point2D *p)
+	float x;	// point coordinates
+	float y;
+
+	// comparator
+    bool equals(Point2D *p)		
     {
         if (this->x == p->x && this->y == p->y)
             return true;
         return false;
     }
 
-	Point2D()
+	// default constructor
+	Point2D()	
 	{
 	}
-
+	
+	// constructor
 	Point2D(float x, float y)
 	{
 		this->x = x;
 		this->y = y;
 	}
 
-    Point2D(const Point2D &p)	// copy constructor
+	// copy constructor
+    Point2D(const Point2D &p)	
     {
         this->x = p.x;
         this->y = p.y;
     }
 
-	Point2D& operator =(const Point2D& other)
-	{
-		x = other.x;
-		y = other.y;
-		return *this;
-	}
-
+	// addition
 	Point2D& operator +(const Point2D& other)
 	{
 		x += other.x;
@@ -43,13 +44,11 @@ public:
 		return *this;
 	}
 
+	// scaling
 	Point2D operator *(float f)
 	{
 		return Point2D(x * f, y * f);
 	}
-
-    float x;	// point coordinates
-    float y;
 };
 
 #endif

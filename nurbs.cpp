@@ -1,6 +1,6 @@
 #include "nurbs.h"
 
-void Nurbs::setWeights(float *U)
+void Nurbs::setWeights(vector<float> *U)
 {
 	weights = U;
 }
@@ -12,7 +12,7 @@ double Nurbs::sumWeights(double u)
 
 	for (int i = 0; i < numPts; i++)
 	{
-		result += weights[i] * bSplineBasis(i, m, k, u, knots);
+		result += (*weights)[i] * bSplineBasis(i, m, k, u, knots);
 	}
 	return result;
 }
@@ -25,7 +25,7 @@ Point2D *Nurbs::sumPointWeights(double u)
 
 	for (int i = 0; i < numPts; i++)
 	{
-		p = p + ctrlPts[i] * weights[i] * bSplineBasis(i, m, k, u, knots);
+		p = p + *(*ctrlPts)[i] * (*weights)[i] * bSplineBasis(i, m, k, u, knots);
 	}
 	double totalWeight = sumWeights(u);
 	p = p * (1.0 / totalWeight);

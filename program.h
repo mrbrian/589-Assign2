@@ -3,56 +3,57 @@
 
 #include <GLFW/glfw3.h>
 #include "point2D.h"
-#include <vector>
 #include "bspline.h"
-#include <iostream>
 #include "nurbs.h"
+#include <vector>
+#include <iostream>
 
 using namespace std;
 
 class Program
 {
 public:
+	bool nurbs_on = false;			// is nurbs activated?  default off
+	
 	enum State { NORMAL, WEIGHT, ON_CURVE };
-	bool nurbs_on = false;
-	State state = State::NORMAL;
-	int activeIdx = -1;
-	int selectedIdx = -1;
+	State state = State::NORMAL;	// program state 
+	int activeIdx = -1;				// the control/curve point the user is clicked on (resets to -1 after mouse release)
+	int selectedIdx = -1;			// the selected control point (persistent after mouse release)
 	
 
-	Program();
-	void render();
-	void addPoint();
-	void deleteSelected();
+	Program();						// constructor
+	void render();					// render function
+	void renderPoints_NURBS();		// render NURBS curve
+	void renderPoints_BSpline();	// render Bspline curve
+	void renderGeometric();			// render the geometric display
+	
+	vector<Point2D*> ctrlPts;		// the main list of control points
+	vector<Point2D*> splinePts;		// evaluated points on the curve (for rendering)
+	vector<float> splinePts_u;		// associated u values for each rendered curve point (for geometric display)
+	vector<Point2D*> geoPts;		// the geometric display lines  
+	vector<Point2D*> convexPts;		// the lines between the control points with some influence
+	vector<float> weights;			// NURBS control point weight list
 
-	vector<Point2D*> ctrlPts;
-	vector<Point2D*> splinePts;
-	vector<float> splinePts_u;
-	vector<Point2D*> geoPts;
-	vector<Point2D*> convexPts;
-	vector<float> weights;
-
-	void mouseClick(int button, double mouseX, double mouseY);
-	void mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY);
-	void mouseRelease();
-	int modifyOrder(int v);
-	void modifyStep(float v);
-	void modifyWeight(float v);
-	bool toggleNurbs();
+	void mouseClick(int button, double mouseX, double mouseY);							// process mouse clicks
+	void mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY);	// handle points dragging or editing NURBS weights
+	void mouseRelease();			// just resets the program state to NORMAL
+	int modifyOrder(int v);			// modfifier: clamps 2 <= order 
+	void modifyStep(float v);		// modifier: clamps 0.01 <= step <= 1 
+	void modifyWeight(float v);		// modifier: clamps 0 <= weight 
+	bool toggleNurbs();				// switch between displaying the nurbs/bspline curve
 
 private:
-	Nurbs nurbs;
-	BSpline spline;
-	BSpline *curve;
-	int order = 2;
-	float step_u = 0.01f;
-	float selectDistance = 0.05;
+	Nurbs nurbs;					// nurbs object
+	BSpline spline;					// spline object
+	BSpline *curve;					// points at the active curve depending on the mode (BSpline or NURBS)
+	int order = 2;					// order of the curve
+	float step_u = 0.01f;			// step increment of u
+	float selectDistance = 0.05;	// distance threshold for point selection
 
-	void updateCurveCtrlPoints();
-	void updateCurveWeights();
-	void updateCurve();
-	void getSplineLines();
-	bool selectCurvePoint(double mouseX, double mouseY);
+	void updateCurveCtrlPoints();	// update the control points of the curve
+	void updateCurveWeights();		// update the weights of the curve
+	void updateCurve();				// update the render points for the curve
+	bool selectCurvePoint(double mouseX, double mouseY);	// if within range, select a point on the curve.  TRUE = a point was selected
 };
 
 #endif

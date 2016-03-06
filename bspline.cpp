@@ -8,8 +8,6 @@ int BSpline::getIndexOfFocus(float u)
 		if ((u == 1 && knots[i + 1] >= 1) || (u >= knots[i] && u < knots[i + 1]))
 			return i;
 	}
-	//if (u >= knots[i])
-	//	return i - 1;
 	return -1;
 }
 
@@ -19,14 +17,14 @@ Point2D BSpline::getPoint(float u)
 	float y = 0;
 	for (int i = 0; i < k; i++)
 	{
-		Point2D p = ctrlPts[i];
+		Point2D p = *(*ctrlPts)[i];
 		x += p.x;
 		y += p.y;
 	}
 	return Point2D(-1, -1);
 }
 
-void BSpline::setControlPoints(int in_m, Point2D *p)
+void BSpline::setControlPoints(int in_m, vector<Point2D*> *p)
 {
 	m = in_m;
 	ctrlPts = p;
@@ -54,25 +52,26 @@ Point2D BSpline::bruteSum(float u)
 	return bruteSum(m, k, u, ctrlPts, knots);
 }
 
+/* 
+effsum: Efficient algorithm for BSplines
+Given a index of focus, evaluate the point at u, and add the geometric interpretation points, 
+and influencing control points into the given geoPts, convexPts lists	
+*/
 Point2D *BSpline::effSum(int d, float u, vector<Point2D*> *geoPts, vector<Point2D*> *convexPts)
 {
-	//k: order of B-spline
-	//m: number of control points
-	//E[ ]: coefficient vector( can be x[ ], y[ ], z[ ] of the control points
-	//u[ ]: knot sequence
-	//u: fixed parameter value
-
+	// clear the lists
 	if (convexPts)
 		convexPts->clear();
 	if (geoPts)
 		geoPts->clear();
-	Point2D *c = new Point2D[k];
+
+	Point2D *c = new Point2D[k];	
 
 	for (int i = 0; i <= k - 1; i++)
 	{
-		c[i] = ctrlPts[d - i]; //nonzero coefficients
+		c[i] = *(*ctrlPts)[d - i];		//nonzero coefficients
 		if (convexPts)
-			convexPts->push_back(&ctrlPts[d - i]);
+			convexPts->push_back((*ctrlPts)[d - i]);		// add as a contributing control point
 	}
 	int step = 0;
 	for (int r = k; r >= 2; r--)
@@ -92,7 +91,8 @@ Point2D *BSpline::effSum(int d, float u, vector<Point2D*> *geoPts, vector<Point2
 			}
 		}
 	}
-	return new Point2D(c[0]);
+	Point2D *result = new Point2D(c[0]);
+	return result;
 }
 
 Point2D *BSpline::effSum(int d, float u)
@@ -132,13 +132,13 @@ void BSpline::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float
 	}
 }
 
-Point2D BSpline::bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots)
+Point2D BSpline::bruteSum(int m, int k, float u, vector<Point2D*> *ctrlPts, float *knots)
 {
 	Point2D s = Point2D(0, 0);
 	for (int i = 0; i <= m; i++)
 	{
 		double contrib = bSplineBasis(i, m, k, u, knots);
-		s = s + ctrlPts[i] * contrib;
+		s = s + *(*ctrlPts)[i] * contrib;
 	}
 	return s;
 }
