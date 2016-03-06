@@ -39,6 +39,7 @@ void Nurbs::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float s
 	if (list)
 		list->clear();
 	float u = 0;
+	float prev_u = 0;
 	int numSteps = (int)(1.0f / step_u);
 
 	vector<Point2D*> *result = new vector<Point2D*>;
@@ -48,6 +49,7 @@ void Nurbs::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float s
 
 	int i = 0;
 	int d = 0;
+	bool end = false;
 	while (u <= 1)
 	{
 		while (u < 1 && u >= knots[d + 1] && d < m + k)
@@ -58,7 +60,14 @@ void Nurbs::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float s
 			u_list->push_back(u);
 		if (list)
 			list->push_back(new Point2D(p.x, p.y));
+
 		u += step_u;
+		if (prev_u < 1 && u > 1 && !end)
+		{
+			end = true;
+			u = 1;
+		}
+		prev_u = u;
 		i++;
 	}
 }

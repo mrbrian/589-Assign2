@@ -127,9 +127,9 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 			state = State::NORMAL;
 			ctrlPts.erase(ctrlPts.begin() + activeIdx);
 			weights.erase(weights.begin() + activeIdx);
-			updateCurve();
 			activeIdx = -1;
 			selectedIdx = activeIdx;
+			updateCurve();
 		}
 		else
 		{
@@ -142,9 +142,13 @@ void Program::modifyStep(float v)
 {
 	step_u += v;
 
-	printf("U Step: %f\n", v);
+	printf("U Step Increment: %f\n", v);
+
 	if (step_u < 0.01f)
 		step_u = 0.01f;
+
+	if (step_u > 1)
+		step_u = 1;
 
 	updateCurve();
 }
@@ -152,7 +156,7 @@ void Program::modifyStep(float v)
 bool Program::toggleNurbs()
 {
 	nurbs_on = !nurbs_on;
-
+	
 	if (nurbs_on)
 		curve = &nurbs;
 	else

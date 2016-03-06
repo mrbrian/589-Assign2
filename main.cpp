@@ -17,9 +17,9 @@
 
 using namespace std;
 
+int w, h;
 Program prog;
 GLFWwindow *window;
-int w, h;
 double mouseX, mouseY;
 
 void renderPoints_NURBS()
@@ -151,9 +151,6 @@ void mouseClick(GLFWwindow *sender, int button, int action, int mods) {
 	if (action == GLFW_RELEASE){
 		prog.mouseRelease();
 	}
-
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-		cout << mouseX << ' ' << mouseY << '\n';
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -180,6 +177,8 @@ int main() {
 	window = glfwCreateWindow(640, 480, "My Window", NULL, NULL);
 	if (!window)
 		return 1;
+
+	printf("CPSC589 Assignment2\n");
 
 	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, keyboard);

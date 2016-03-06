@@ -3,38 +3,22 @@ Brian Yee
 00993104
 T01
 
-
-//• User control of the curve’s order (k).
-• User control of the parameter increment (u).
-should 
-//• Users should be able to add, move, and delete control points through mouse interaction.
-//• Implement the efficient B-spline algorithm discussed in the lectures.
-//• Use the standard knot sequence.
-//• Include an option to demonstrate the algorithm in a geometric fashion.
-• (Bonus 1, 20 marks) Extend your program to implement NURBS. This includes creating a
-good interface for displaying and changing weights.
-• (Bonus 2, 20 marks ) Extend your program to allow the user control of knot spacing and
-multiple knots. This will mean showing the basis curves in parameter space as well as the
-knot positions. In addition, an option to control sharp control points is required. For this
-option, it is enough to use a multiple knot for the indicated control points.
-• (Bonus 3, 20 marks) Extend your program to implement surfaces of revolution based on your
-B-spline curves.
-
 Keyboard controls:
 
-	LEFT CLICK (on empty space)   - add control point 
-	LEFT CLICK + HOLD (on point)  - select control point 
-	LEFT CLICK + HOLD (on curve)  - select point on curve (geometric display)	  
-	LEFT CLICK RELEASE            - deselect all points
+	LEFT CLICK (on empty space) - add control point 
+	LEFT CLICK (on point)       - select control point 
+	LEFT CLICK (on curve)       - select point on curve (geometric display)	  	
+	RIGHT CLICK	(on point)      - delete control point
 	
-	RIGHT CLICK	(on point)        - delete control point
-	MOUSESCROLL	UP/DOWN           - increase/decrease curve order k
-	-/+	                          - increase/decrease step increment
-	RIGHT CLICK + DRAG LEFT/RIGHT - modify weight of selected NURBS point
+	RIGHT CLICK + DRAG (on empty space)    
+	                            - modify weight of selected NURBS point
 	
-	ESCAPE		- exit program
+	MOUSESCROLL	UP/DOWN         - increase/decrease curve order k
+	-/+	                        - increase/decrease step increment
+	N                           - toggle NURBS	
+	ESCAPE		                - exit program
 	
-Bonus:  Nurbs implemented
+Bonus:  implemented NURBS 
 
 Files submitted:
 
@@ -45,4 +29,6 @@ Files submitted:
 	program.h
 	bspline.cpp
 	bspline.h
+	nurbs.cpp
+	nurbs.h
 	makefile

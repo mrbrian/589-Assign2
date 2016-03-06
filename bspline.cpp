@@ -106,10 +106,13 @@ void BSpline::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float
 	u_list->clear();
 
 	float u = 0;
+	float prev_u = 0;
 
 	if (m + 1 < k)
 		return;
 	int d = 0;
+
+	bool end = false;
 	while (u <= 1)
 	{
 		while (u < 1 && u >= knots[d + 1] && d < m + k)
@@ -117,7 +120,15 @@ void BSpline::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float
 
 		list->push_back(effSum(d, u));
 		u_list->push_back(u);
+		
 		u += step_u;
+		
+		if (prev_u < 1 && u > 1 && !end)
+		{
+			u = 1;
+			end = true;
+		}
+		prev_u = u;
 	}
 }
 

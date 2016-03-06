@@ -220,7 +220,7 @@ void geometric_3()	// making a simple line..
 
 	vector<Point2D*> actual;
 	int d = bs.getIndexOfFocus(u);
-	bs.effSum(d, u, &actual,0);
+	bs.effSum(d, u, &actual, 0);
 
 	for (int i = 0; i < 7; i++)
 	{
@@ -260,12 +260,12 @@ void geometric_4()	// making a simple line..
 
 void make_standardKnotSeq_1()
 {
-	float expected[9] = {0,0,0,0.25,0.5,0.75,1,1,1};
+	float expected[9] = { 0, 0, 0, 0.25, 0.5, 0.75, 1, 1, 1 };
 	float *actual = BSpline::standardKnotSeq(5, 3);
 
 	for (int i = 0; i < 9; i++)
 	{
-		if (expected[i] != actual[i])			
+		if (expected[i] != actual[i])
 			cout << "make_standardKnotSeq_1 fail\n";
 	}
 	cout << "make_standardKnotSeq_1 pass\n";
@@ -278,7 +278,7 @@ void bSplinePoint_Efficient_1()
 	float u = 0.5f;
 	int m = 2;
 	int k = 3;
-	Point2D pts[4] = { Point2D(-1, 1), Point2D(0, 0), Point2D(1, 1)};
+	Point2D pts[4] = { Point2D(-1, 1), Point2D(0, 0), Point2D(1, 1) };
 	float *knots = BSpline::standardKnotSeq(m, k);  // 0,0,0,1,1,1
 
 	//iterate
@@ -374,7 +374,7 @@ void eff_bSplinePoint_1()
 	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
 	bs.setControlPoints(2, pts);
 
-	float *knots = BSpline::standardKnotSeq(2,3); // 0,0,0,1,1,1
+	float *knots = BSpline::standardKnotSeq(2, 3); // 0,0,0,1,1,1
 	bs.setKnots(knots);
 	bs.setOrder(3);
 
@@ -415,7 +415,7 @@ Tests::Tests()
 	bruteBSplinePoint_Head();
 	bruteBSplinePoint_Tail();
 	bSplinePoint_2b();
-    bSplineBasis_1();
-    bSplineBasis_2();
+	bSplineBasis_1();
+	bSplineBasis_2();
 	program_getCurveLines_1();*/
 }
