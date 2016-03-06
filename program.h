@@ -6,6 +6,7 @@
 #include "bspline.h"
 #include "nurbs.h"
 #include <vector>
+#include <math.h>
 #include <iostream>
 
 using namespace std;

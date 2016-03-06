@@ -53,8 +53,8 @@ bool Program::selectCurvePoint(double mouseX, double mouseY)
 {
 	for (int i = 0; i < splinePts.size(); i++)	// for all points on the curve in our rendered list
 	{
-		if (abs((*splinePts[i]).x - mouseX) <= selectDistance &&	// if within range..
-			abs((*splinePts[i]).y - mouseY) <= selectDistance)
+		if (fabs((*splinePts[i]).x - mouseX) <= selectDistance &&	// if within range..
+			fabs((*splinePts[i]).y - mouseY) <= selectDistance)
 		{
 			state = State::ON_CURVE;					// switch to curve touching state 
 			float u = splinePts_u[i];					// get the associated u of that curve point
@@ -71,8 +71,8 @@ void Program::mouseClick(int button, double mouseX, double mouseY)
 {
 	for (int i = 0; i < ctrlPts.size(); i++)	// scan all control points
 	{
-		if (abs((*ctrlPts[i]).x - mouseX) <= selectDistance &&		// if distance within the threshold
-			abs((*ctrlPts[i]).y - mouseY) <= selectDistance)
+		if (fabs((*ctrlPts[i]).x - mouseX) <= selectDistance &&		// if distance within the threshold
+			fabs((*ctrlPts[i]).y - mouseY) <= selectDistance)
 		{
 			state = State::NORMAL;		// reset to normal state
 			activeIdx = i;
