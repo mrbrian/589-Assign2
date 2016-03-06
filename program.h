@@ -21,7 +21,6 @@ public:
 	int activeIdx = -1;				// the control/curve point the user is clicked on (resets to -1 after mouse release)
 	int selectedIdx = -1;			// the selected control point (persistent after mouse release)
 	
-
 	Program();						// constructor
 	void render();					// render function
 	void renderPoints_NURBS();		// render NURBS curve
@@ -40,10 +39,11 @@ public:
 	void mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY);	// handle points dragging or editing NURBS weights
 	void mouseRelease();			// just resets the program state to NORMAL
 	int modifyOrder(int v);			// modfifier: clamps 2 <= order 
+	void modifyStep(float v);		// modifier: clamps 0.01 <= step <= 1 
 	void modifyWeight(float v);		// modifier: clamps 0 <= weight 
 	void modifyStep(float v, bool rel);		// modifier: clamps 0.01 <= step <= 1 
 	bool toggleNurbs();				// switch between displaying the nurbs/bspline curve
-	float getStep();					// getter
+	float getStep();				// getter
 
 private:
 	Nurbs nurbs;					// nurbs object

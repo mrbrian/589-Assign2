@@ -15,37 +15,37 @@ Program::Program()
 void Program::updateCurve()
 {
 	int m = ctrlPts.size() - 1;
-	float *knots = BSpline::standardKnotSeq(m, order);	// get standard knot sequence
-	curve->setKnots(knots);								// update the standard knot sequence
-	curve->setOrder(order);								// update curve k
-	curve->getLinePoints(&splinePts, &splinePts_u, step_u);		// update list of points to render
+	float *knots = BSpline::standardKnotSeq(m, order);
+	curve->setKnots(knots);
+	curve->setOrder(order);
+	curve->getLinePoints(&splinePts, &splinePts_u, step_u);
 }
 
 void Program::mouseRelease()
 {
-	state = State::NORMAL;		// go back to normal state
-	activeIdx = -1;				// released, so no longer mousedown on a point  (not active)
+	state = State::NORMAL;
+	activeIdx = -1;
 }
 
 void Program::mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY)
 {
 	double dx = newMouseX - mouseX;
 	
-	if (state == State::WEIGHT && selectedIdx != -1)	// weight editing state 
+	if (state == State::WEIGHT && selectedIdx != -1)
 	{
-		modifyWeight(dx);					// change the NURBS point weight
+		modifyWeight(dx);
 		return;
 	}
-	if (state == State::ON_CURVE)			// we are holding the mouse down on the curve (geometric display)
+	if (state == State::ON_CURVE)
 	{
-		selectCurvePoint(mouseX, mouseY);	// keep selecting points on the curve
+		selectCurvePoint(mouseX, mouseY);
 		return;
 	}
 
-	if (activeIdx < 0)					// if we are holding mousedown on a point
+	if (activeIdx < 0)
 		return;
+	Point2D &p = *ctrlPts[activeIdx];
 
-	Point2D &p = *ctrlPts[activeIdx];	// update the position of the control point
 	p.x = mouseX;
 	p.y = mouseY;
 	updateCurve();
