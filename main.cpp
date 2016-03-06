@@ -38,9 +38,15 @@ void render() {
 	glPointSize(5.0);
 	//We draw a line on the screen, which gets transformed by the modelview matrix
 	glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
-	glColor3f(1.0f, 1.0f, 1.0f);
+	if (prog.nurbs_on)
+		glColor3f(0.0f, 1.0f, 0.0f);
+	else
+		glColor3f(1.0f, 1.0f, 1.0f);
+	
 	for (int i = 0; i < prog.ctrlPts.size(); i++)
 	{
+		if (prog.selected == i)
+			glColor3f(1.0f, 1.0f, 0);
 		glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
 	}
 	glEnd();
@@ -83,7 +89,6 @@ void render() {
 
 }
 
-
 void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 	if ((action == GLFW_PRESS || action == GLFW_REPEAT))
 		switch (key)
@@ -92,17 +97,20 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 			cout << "A was pressed.\n";
 			break;
 		case GLFW_KEY_MINUS:
-			{
-				float s = prog.modifyStep(0.01);
-				printf("U Increment: %f\n", s);
-			}
+				prog.modifyStep(0.01);
 			break;
-		case GLFW_KEY_EQUAL:
-			{
-				float s = prog.modifyStep(-0.01);
-				printf("U Increment: %f\n", s);
-			}
-			break;
+			case GLFW_KEY_EQUAL:
+				prog.modifyStep(-0.01);
+				break;
+			case GLFW_KEY_UP:
+				prog.modifyWeight(0.1);
+				break;
+			case GLFW_KEY_DOWN:
+				prog.modifyWeight(-0.1);
+				break;
+			case GLFW_KEY_N:
+				prog.toggleNurbs();
+				break;
 		case GLFW_KEY_ESCAPE:
 			printf("Exciting..\n");
 			glfwSetWindowShouldClose(window, GL_TRUE);

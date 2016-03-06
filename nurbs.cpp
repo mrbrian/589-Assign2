@@ -32,15 +32,19 @@ Point2D *Nurbs::sumPointWeights(double u)
 	return new Point2D(p);
 }
 
-vector<Point2D*> *Nurbs::getCurveLines(float stepSize)
+void Nurbs::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float step_u)
 {
+	if (u_list)
+		u_list->clear();
+	if (list)
+		list->clear();
 	float u = 0;
-	int numSteps = (int)(1.0f / stepSize);
+	int numSteps = (int)(1.0f / step_u);
 
 	vector<Point2D*> *result = new vector<Point2D*>;
 
 	if (m < 2)
-		return 0;
+		return;
 	BSpline bs;
 	bs.setControlPoints(m, ctrlPts);
 	bs.setKnots(knots);
@@ -54,10 +58,11 @@ vector<Point2D*> *Nurbs::getCurveLines(float stepSize)
 			d++;
 
 		Point2D &p = *sumPointWeights(u);
-		result->push_back(new Point2D(p.x, p.y));
-		u += stepSize;
+		if (u_list)
+			u_list->push_back(u);
+		if (list)
+			list->push_back(new Point2D(p.x, p.y));
+		u += step_u;
 		i++;
 	}
-
-	return result;
 }

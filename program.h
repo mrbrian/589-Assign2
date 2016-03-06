@@ -6,6 +6,7 @@
 #include <vector>
 #include "bspline.h"
 #include <iostream>
+#include "nurbs.h"
 
 using namespace std;
 
@@ -13,8 +14,12 @@ class Program
 {
 public:
 	enum State { NORMAL, ON_CURVE };
+	bool nurbs_on = false;
 	State state = State::NORMAL;
+	int selected = -1;
+	
 
+	Program();
 	void render();
 	void addPoint();
 	void deleteSelected();
@@ -24,21 +29,27 @@ public:
 	vector<float> splinePts_u;
 	vector<Point2D*> geoPts;
 	vector<Point2D*> convexPts;
+	vector<float> weights;
 
 	void mouseClick(int button, double mouseX, double mouseY);
 	void mouseDrag(double mouseX, double mouseY);
 	void mouseRelease();
 	int modifyOrder(int v);
-	float modifyStep(float v);
+	void modifyStep(float v);
+	void modifyWeight(float v);
+	bool toggleNurbs();
 
 private:
+	Nurbs nurbs;
 	BSpline spline;
+	BSpline *curve;
 	int order = 2;
-	int selected = -1;
 	float step_u = 0.01f;
 	float selectDistance = 0.05;
 
-	void updateBSpline();
+	void updateCurveCtrlPoints();
+	void updateCurveWeights();
+	void updateCurve();
 	void getSplineLines();
 	void scanCurvePoints(double mouseX, double mouseY);
 };

@@ -22,7 +22,8 @@ void nurbs_1()
 	n.setKnots(knots);
 	n.setWeights(weights);
 
-	vector<Point2D*> actual = *n.getCurveLines(0.5f);
+	vector<Point2D*> actual;
+	n.getLinePoints(&actual, 0, 0.5);
 
 	for (int i = 0; i < 3; i++)
 	{
@@ -68,7 +69,8 @@ void nurbs_2()
 	n.setKnots(knots);
 	n.setWeights(weights);
 
-	vector<Point2D*> actual = *n.getCurveLines(0.5f);
+	vector<Point2D*> actual;
+	n.getLinePoints(&actual, 0, 0.5f);
 
 	for (int i = 0; i < 3; i++)
 	{
