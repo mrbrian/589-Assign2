@@ -15,7 +15,7 @@ class Program
 public:
 	bool nurbs_on = false;			// is nurbs activated?  default off
 	
-	enum State { NORMAL, WEIGHT, ON_CURVE };
+	enum State { NORMAL, WEIGHT, ON_CURVE };	// ON_CURVE = touching curve, show geometric display,  WEIGHT = editing NURBS weights, NORMAL = otherwise
 	State state = State::NORMAL;	// program state 
 	int activeIdx = -1;				// the control/curve point the user is clicked on (resets to -1 after mouse release)
 	int selectedIdx = -1;			// the selected control point (persistent after mouse release)
@@ -51,7 +51,6 @@ private:
 	float selectDistance = 0.05;	// distance threshold for point selection
 
 	void updateCurveCtrlPoints();	// update the control points of the curve
-	void updateCurveWeights();		// update the weights of the curve
 	void updateCurve();				// update the render points for the curve
 	bool selectCurvePoint(double mouseX, double mouseY);	// if within range, select a point on the curve.  TRUE = a point was selected
 };

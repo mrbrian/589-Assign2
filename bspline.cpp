@@ -47,11 +47,6 @@ void BSpline::setKnots(float *U)
 	knots = U;
 }
 
-Point2D BSpline::bruteSum(float u)
-{
-	return bruteSum(m, k, u, ctrlPts, knots);
-}
-
 /* 
 effsum: Efficient algorithm for BSplines
 Given a index of focus, evaluate the point at u, and add the geometric interpretation points, 
@@ -130,17 +125,6 @@ void BSpline::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float
 		}
 		prev_u = u;
 	}
-}
-
-Point2D BSpline::bruteSum(int m, int k, float u, vector<Point2D*> *ctrlPts, float *knots)
-{
-	Point2D s = Point2D(0, 0);
-	for (int i = 0; i <= m; i++)
-	{
-		double contrib = bSplineBasis(i, m, k, u, knots);
-		s = s + *(*ctrlPts)[i] * contrib;
-	}
-	return s;
 }
 
 float *BSpline::standardKnotSeq(int m, int k)

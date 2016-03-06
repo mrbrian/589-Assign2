@@ -5,12 +5,7 @@ using namespace std;
 Program::Program()
 {
 	curve = &spline;	// default mode is bspline, so point at the BSpline
-}
-
-// update the NURBS curve's weights
-void Program::updateCurveWeights()
-{
-	nurbs.setWeights(&weights);
+	nurbs.setWeights(&weights);		// link the NURBS curve weights to the program weight list
 }
 
 void Program::updateCurveCtrlPoints()
@@ -21,7 +16,6 @@ void Program::updateCurveCtrlPoints()
 
 void Program::updateCurve()
 {
-	updateCurveWeights();
 	updateCurveCtrlPoints();
 	int m = ctrlPts.size() - 1;
 	float *knots = BSpline::standardKnotSeq(m, order);
