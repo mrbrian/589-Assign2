@@ -121,34 +121,6 @@ void BSpline::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float
 	}
 }
 
-Point2D *BSpline::getGeoLines(int d, float u)
-{
-	Point2D *c = new Point2D[k];
-
-	int size = ((k - 1) * k) / 2;
-	Point2D *result = new Point2D[size];
-	int offs = 0;
-	for (int i = 0; i <= k - 1; i++)
-	{
-		c[i] = ctrlPts[d - i]; //nonzero coefficients
-	}
-	int step = 0;
-
-	for (int r = k; r >= 2; r--)
-	{
-		int i = d;
-		for (int s = 0; s <= r - 2; s++)
-		{
-			float omega = (u - knots[i]) / (knots[i + r - 1] - knots[i]);
-			c[s] = c[s] * omega + c[s + 1] * (1 - omega);
-			i = i - 1;
-			result[offs] = c[s];
-			offs++;
-		}
-	}
-	return result;// c[0];
-}
-
 Point2D BSpline::bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots)
 {
 	Point2D s = Point2D(0, 0);

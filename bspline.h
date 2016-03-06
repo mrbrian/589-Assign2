@@ -25,7 +25,6 @@ public:
 	Point2D *effSum(int d, float u, vector<Point2D*> *geoPts, vector<Point2D*> *convexPts);
 	Point2D *effSum(int d, float u);
 	virtual void getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float step_u);
-	virtual Point2D *getGeoLines(int d, float u);
 	static float *standardKnotSeq(int m, int k);
 	static double bSplineBasis(int i, int m, int k, double u, float *knots);
 	static Point2D bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots);

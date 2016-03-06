@@ -22,6 +22,70 @@ GLFWwindow *window;
 int w, h;
 double mouseX, mouseY;
 
+void renderPoints_NURBS()
+{
+	for (int i = 0; i < prog.ctrlPts.size(); i++)
+	{
+		float psize = fmax(2, prog.weights[i] * 2);
+		if (prog.selectedIdx == i)
+			psize += 1;
+
+		glPointSize(psize);
+		glBegin(GL_POINTS);
+
+		if (prog.selectedIdx == i)
+			glColor3f(1, 1, 1);
+		else
+			glColor3f(0.0f, 1.0f, 0.0f);
+
+		glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
+		glEnd();
+	}
+}
+
+void renderPoints_BSpline()
+{
+	glPointSize(5.0);
+	glBegin(GL_POINTS);
+
+	for (int i = 0; i < prog.ctrlPts.size(); i++)
+	{
+		if (prog.selectedIdx == i)
+			glColor3f(1, 1, 1);
+		else
+			glColor3f(1, 0, 1);
+
+		glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
+	}
+	glEnd();
+}
+
+void renderGeometric()
+{
+	glBegin(GL_LINES);
+	glColor3f(1.0f, 1.0f, 0.0f);
+
+	for (int i = 0; i < prog.geoPts.size() - 1; i++)
+	{
+		glVertex2f((*prog.geoPts[i]).x, (*prog.geoPts[i]).y);
+	}
+	glEnd();
+
+	glBegin(GL_LINE_STRIP);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	for (int i = 0; i < prog.convexPts.size(); i++)
+	{
+		glVertex2f((*prog.convexPts[i]).x, (*prog.convexPts[i]).y);
+	}
+	glEnd();
+
+	int idx = prog.geoPts.size() - 1;
+	glBegin(GL_POINTS);
+	glColor3f(1.0f, 1.0f, 0.0f);
+	glVertex2f((*prog.geoPts[idx]).x, (*prog.geoPts[idx]).y);
+	glEnd();
+}
+
 void render() {
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -35,37 +99,13 @@ void render() {
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 
-	// render the control points
+	// Render the control points
 	if (prog.nurbs_on)
-	{
-		for (int i = 0; i < prog.ctrlPts.size(); i++)
-		{
-			float psize = fmax(2, prog.weights[i] * 2);
-			glPointSize(psize);
-			glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
-			glColor3f(0.0f, 1.0f, 0.0f);			
-			if (prog.selected == i)
-				glColor3f(1.0f, 1.0f, 0);
-			glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
-			glEnd();
-		}
-	}
+		renderPoints_NURBS();	
 	else
-	{
-		glPointSize(5.0);
-		glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
-		glColor3f(1.0f, 1.0f, 1.0f);
-		for (int i = 0; i < prog.ctrlPts.size(); i++)
-		{
-			if (prog.selected == i)
-				glColor3f(1.0f, 1.0f, 0);
-			else
-				glColor3f(1.0f, 1.0f, 1.0f);
-			glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
-		}
-		glEnd();
-	}
+		renderPoints_BSpline();
 
+	// Render the curve
 	glBegin(GL_LINE_STRIP);
 	glColor3f(1.0f, 0.0f, 1.0f);
 
@@ -75,33 +115,9 @@ void render() {
 	}
 	glEnd();
 
-	if (prog.state == Program::State::ON_CURVE)
-	{
-		glBegin(GL_LINES); 
-		glColor3f(1.0f, 1.0f, 0.0f);
-
-		for (int i = 0; i < prog.geoPts.size() - 1; i++)
-		{
-			glVertex2f((*prog.geoPts[i]).x, (*prog.geoPts[i]).y);
-		}
-		glEnd();
-		
-		glBegin(GL_LINE_STRIP);
-		glColor3f(1.0f, 0.0f, 0.0f);
-		for (int i = 0; i < prog.convexPts.size(); i++)
-		{
-			glVertex2f((*prog.convexPts[i]).x, (*prog.convexPts[i]).y);
-		}
-		glEnd();
-
-		int idx = prog.geoPts.size() - 1;
-		glBegin(GL_LINE_STRIP);
-		glColor3f(1.0f, 1.0f, 0.0f);
-		glVertex2f((*prog.geoPts[idx]).x, (*prog.geoPts[idx]).y);
-		glEnd();
-
-	}
-
+	// Geometric display  (bspline only)
+	if (!prog.nurbs_on && prog.state == Program::State::ON_CURVE)
+		renderGeometric();
 }
 
 void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
@@ -116,12 +132,6 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 			break;
 			case GLFW_KEY_EQUAL:
 				prog.modifyStep(-0.01);
-				break;
-			case GLFW_KEY_UP:
-				prog.modifyWeight(0.5);
-				break;
-			case GLFW_KEY_DOWN:
-				prog.modifyWeight(-0.5);
 				break;
 			case GLFW_KEY_N:
 				prog.toggleNurbs();
@@ -152,10 +162,13 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void mousePos(GLFWwindow *sender, double x, double y) {
-	mouseX = (x / w) * 2 - 1;
-	mouseY = (y / h) * (-2) + 1;
+	double newMouseX = (x / w) * 2 - 1;
+	double newMouseY = (y / h) * (-2) + 1;
 
-	prog.mouseDrag(mouseX, mouseY);	
+	prog.mouseDrag(mouseX, mouseY, newMouseX, newMouseY);
+	
+	mouseX = newMouseX;
+	mouseY = newMouseY;
 }
 
 int main() {

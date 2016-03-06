@@ -10,7 +10,7 @@ double Nurbs::sumWeights(double u)
 	double result = 0;
 	int numPts = m + 1;
 
-	for (int i = 0; i < k; i++)
+	for (int i = 0; i < numPts; i++)
 	{
 		result += weights[i] * bSplineBasis(i, m, k, u, knots);
 	}
@@ -45,10 +45,6 @@ void Nurbs::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float s
 
 	if (m < 2)
 		return;
-	BSpline bs;
-	bs.setControlPoints(m, ctrlPts);
-	bs.setKnots(knots);
-	bs.setOrder(k);
 
 	int i = 0;
 	int d = 0;

@@ -47,70 +47,94 @@ void Program::updateCurve()
 void Program::mouseRelease()
 {
 	state = State::NORMAL;
-	selected = -1;
+	activeIdx = -1;
 }
 
-void Program::mouseDrag(double mouseX, double mouseY)
+void Program::mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY)
 {
+	double dx = newMouseX - mouseX;
+	
+	if (state == State::WEIGHT && selectedIdx != -1)
+	{
+		modifyWeight(dx);
+		return;
+	}
 	if (state == State::ON_CURVE)
 	{
-		scanCurvePoints(mouseX, mouseY);
+		selectCurvePoint(mouseX, mouseY);
 		return;
 	}
 
-	if (selected < 0)// || selected > m)
+	if (activeIdx < 0)
 		return;
-	Point2D &p = *ctrlPts[selected];
+	Point2D &p = *ctrlPts[activeIdx];
 
 	p.x = mouseX;
 	p.y = mouseY;
 	updateCurve();
 }
 
-void Program::scanCurvePoints(double mouseX, double mouseY)
+bool Program::selectCurvePoint(double mouseX, double mouseY)
 {
-	for (int i = 0; i < splinePts.size(); i++){
+	for (int i = 0; i < splinePts.size(); i++)
+	{
 		if (abs((*splinePts[i]).x - mouseX) <= selectDistance &&
-			abs((*splinePts[i]).y - mouseY) <= selectDistance){
+			abs((*splinePts[i]).y - mouseY) <= selectDistance)
+		{
 			state = State::ON_CURVE;
 			float u = splinePts_u[i];
 			int d = curve->getIndexOfFocus(u);
 			curve->effSum(d, u, &geoPts, &convexPts);
-			selected = i;
-			break;
+			activeIdx = i;
+			return true;
 		}
 	}
+	return false;
 }
 
 void Program::mouseClick(int button, double mouseX, double mouseY)
 {
-	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	for (int i = 0; i < ctrlPts.size(); i++)
 	{
-		for (int i = 0; i < ctrlPts.size(); i++){
-			if (abs((*ctrlPts[i]).x - mouseX) <= selectDistance &&
-				abs((*ctrlPts[i]).y - mouseY) <= selectDistance){
-				state = State::NORMAL;
-				selected = i;
-				return;
-			}
-		}
-
-		scanCurvePoints(mouseX, mouseY);
-
-		if (selected == -1){
+		if (abs((*ctrlPts[i]).x - mouseX) <= selectDistance &&
+			abs((*ctrlPts[i]).y - mouseY) <= selectDistance)
+		{
 			state = State::NORMAL;
-			selected = ctrlPts.size();
-			ctrlPts.push_back(new Point2D(mouseX, mouseY));
-			weights.push_back(1);
-			updateCurve();
+			activeIdx = i;
+			break;
 		}
 	}
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && selected > -1){
-		state = State::NORMAL;
-		ctrlPts.erase(ctrlPts.begin() + selected);
-		weights.erase(weights.begin() + selected);
-		updateCurve();
-		selected = -1;
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	{
+		selectedIdx = activeIdx;
+		if (activeIdx == -1)
+		{
+			if (!selectCurvePoint(mouseX, mouseY))		// if the curve wasn't clicked
+			{
+				state = State::NORMAL;
+				activeIdx = ctrlPts.size();
+				ctrlPts.push_back(new Point2D(mouseX, mouseY));
+				weights.push_back(1);
+				updateCurve();
+			}
+		}
+	}
+	if (button == GLFW_MOUSE_BUTTON_RIGHT)
+	{
+		if (activeIdx != -1)
+		{
+			state = State::NORMAL;
+			ctrlPts.erase(ctrlPts.begin() + activeIdx);
+			weights.erase(weights.begin() + activeIdx);
+			updateCurve();
+			activeIdx = -1;
+			selectedIdx = activeIdx;
+		}
+		else
+		{
+			state = State::WEIGHT;
+		}
 	}
 }
 
@@ -145,12 +169,13 @@ void Program::modifyWeight(float v)
 		printf("NURBS is not active.  (Press N to toggle)\n");
 		return;
 	}
-	if (selected == -1)
+	if (selectedIdx == -1)
 	{
 		printf("No vertex selected.\n");
 		return;
 	}
-	float &w = weights[selected];
+	int idx = selectedIdx;
+	float &w = weights[idx];
 	w += v;
 	if (w < 0)
 		w = 0;

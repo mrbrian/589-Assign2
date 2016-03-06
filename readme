@@ -22,14 +22,15 @@ B-spline curves.
 
 Keyboard controls:
 
-	LEFT CLICK	- add control point 
-				  select control point 
-				  select point on curve (geometric display)
-				  
-	RIGHT CLICK	- delete control point
-	MOUSESCROLL	- increase/decrease curve order k
-	-/+			- increase/decrease step increment
-	UP/DOWN		- increase weight of selected nurbs point
+	LEFT CLICK (on empty space)   - add control point 
+	LEFT CLICK + HOLD (on point)  - select control point 
+	LEFT CLICK + HOLD (on curve)  - select point on curve (geometric display)	  
+	LEFT CLICK RELEASE            - deselect all points
+	
+	RIGHT CLICK	(on point)        - delete control point
+	MOUSESCROLL	UP/DOWN           - increase/decrease curve order k
+	-/+	                          - increase/decrease step increment
+	RIGHT CLICK + DRAG LEFT/RIGHT - modify weight of selected NURBS point
 	
 	ESCAPE		- exit program
 	

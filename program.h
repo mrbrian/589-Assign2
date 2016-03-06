@@ -13,10 +13,11 @@ using namespace std;
 class Program
 {
 public:
-	enum State { NORMAL, ON_CURVE };
+	enum State { NORMAL, WEIGHT, ON_CURVE };
 	bool nurbs_on = false;
 	State state = State::NORMAL;
-	int selected = -1;
+	int activeIdx = -1;
+	int selectedIdx = -1;
 	
 
 	Program();
@@ -32,7 +33,7 @@ public:
 	vector<float> weights;
 
 	void mouseClick(int button, double mouseX, double mouseY);
-	void mouseDrag(double mouseX, double mouseY);
+	void mouseDrag(double mouseX, double mouseY, double newMouseX, double newMouseY);
 	void mouseRelease();
 	int modifyOrder(int v);
 	void modifyStep(float v);
@@ -51,7 +52,7 @@ private:
 	void updateCurveWeights();
 	void updateCurve();
 	void getSplineLines();
-	void scanCurvePoints(double mouseX, double mouseY);
+	bool selectCurvePoint(double mouseX, double mouseY);
 };
 
 #endif

@@ -8,6 +8,31 @@
 
 using namespace std;
 
+void nurbs_3()
+{
+	Nurbs n;
+	Point2D expected[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	int m = 2;
+	int k = 2;
+	float *knots = Nurbs::standardKnotSeq(m, k);
+	float weights[] = { 1, 1, 1 };
+	n.setControlPoints(2, pts);
+	n.setOrder(k);
+	n.setKnots(knots);
+	n.setWeights(weights);
+
+	vector<Point2D*> actual;
+	n.getLinePoints(&actual, 0, 0.5);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "nurbs_3 fail\n";
+	}
+	cout << "nurbs_3 pass\n";
+}
+
 void nurbs_1()
 {
 	Nurbs n;
@@ -371,6 +396,7 @@ Tests::Tests()
 	nurbs_weight_2();
 	nurbs_1();
 	nurbs_2();
+	nurbs_3();
 
 	/*geometric_1();
 	geometric_2();
