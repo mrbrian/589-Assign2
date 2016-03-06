@@ -22,10 +22,13 @@ B-spline curves.
 
 Keyboard controls:
 
-	LEFT CLICK	- add control point / select control point
+	LEFT CLICK	- add control point 
+				  select control point 
+				  select point on curve (geometric display)
+				  
 	RIGHT CLICK	- delete control point
 	MOUSESCROLL	- increase/decrease curve order k
-	
+	-/+			- increase/decrease step increment
 	SPACE 		- toggle geometric display
 	
 	ESCAPE		- exit program
