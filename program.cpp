@@ -134,6 +134,7 @@ bool Program::toggleNurbs()
 	else
 		curve = &spline;
 
+	updateCurve();
 	return nurbs_on;
 }
 

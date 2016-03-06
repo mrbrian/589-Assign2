@@ -10,7 +10,7 @@ should
 //• Users should be able to add, move, and delete control points through mouse interaction.
 //• Implement the efficient B-spline algorithm discussed in the lectures.
 //• Use the standard knot sequence.
-• Include an option to demonstrate the algorithm in a geometric fashion.
+//• Include an option to demonstrate the algorithm in a geometric fashion.
 • (Bonus 1, 20 marks) Extend your program to implement NURBS. This includes creating a
 good interface for displaying and changing weights.
 • (Bonus 2, 20 marks ) Extend your program to allow the user control of knot spacing and
@@ -29,13 +29,11 @@ Keyboard controls:
 	RIGHT CLICK	- delete control point
 	MOUSESCROLL	- increase/decrease curve order k
 	-/+			- increase/decrease step increment
-	SPACE 		- toggle geometric display
+	UP/DOWN		- increase weight of selected nurbs point
 	
 	ESCAPE		- exit program
 	
-User can press and hold keys to modify the hypocycloid values.  
-
-Bonus:  Start/stop the animation by pressing SPACE.
+Bonus:  Nurbs implemented
 
 Files submitted:
 

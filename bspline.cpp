@@ -149,37 +149,6 @@ Point2D *BSpline::getGeoLines(int d, float u)
 	return result;// c[0];
 }
 
-Point2D **BSpline::getCurveLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize)
-{
-	float u = 0;
-	int numSteps = (int)(1.0f / stepSize);
-
-	Point2D **result = new Point2D*[numSteps];
-
-	if (m < 2)
-		return 0;
-	BSpline bs;
-	bs.setControlPoints(m, ctrlPts);
-	bs.setKnots(knots);
-	bs.setOrder(k);
-	
-	int i = 0;
-	int d = 0;
-	while (u <= 1)
-	{
-		while (u < 1 && u >= knots[d + 1] && d < m + k)
-			d++;
-
-		//Point2D p = BSpline::bruteSum(m, k, u, ctrlPts, knots);
-		Point2D &p = *bs.effSum(d, u);
-		result[i] = new Point2D(p.x, p.y);
-		u += stepSize;
-		i++;
-	}
-
-	return result;
-}
-
 Point2D BSpline::bruteSum(int m, int k, float u, Point2D *ctrlPts, float *knots)
 {
 	Point2D s = Point2D(0, 0);

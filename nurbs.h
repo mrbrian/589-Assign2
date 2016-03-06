@@ -11,11 +11,12 @@ using namespace std;
 class Nurbs : public BSpline
 {
 public:
+	float *weights;
+
 	void setWeights(float *U);
 	void getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float step_u) override;
 	Point2D *sumPointWeights(double u);
 	double sumWeights(double u);
-	float *weights;
 };
 
 

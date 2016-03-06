@@ -35,21 +35,36 @@ void render() {
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 
-	glPointSize(5.0);
-	//We draw a line on the screen, which gets transformed by the modelview matrix
-	glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
+	// render the control points
 	if (prog.nurbs_on)
-		glColor3f(0.0f, 1.0f, 0.0f);
-	else
-		glColor3f(1.0f, 1.0f, 1.0f);
-	
-	for (int i = 0; i < prog.ctrlPts.size(); i++)
 	{
-		if (prog.selected == i)
-			glColor3f(1.0f, 1.0f, 0);
-		glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
+		for (int i = 0; i < prog.ctrlPts.size(); i++)
+		{
+			float psize = fmax(2, prog.weights[i] * 2);
+			glPointSize(psize);
+			glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
+			glColor3f(0.0f, 1.0f, 0.0f);			
+			if (prog.selected == i)
+				glColor3f(1.0f, 1.0f, 0);
+			glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
+			glEnd();
+		}
 	}
-	glEnd();
+	else
+	{
+		glPointSize(5.0);
+		glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
+		glColor3f(1.0f, 1.0f, 1.0f);
+		for (int i = 0; i < prog.ctrlPts.size(); i++)
+		{
+			if (prog.selected == i)
+				glColor3f(1.0f, 1.0f, 0);
+			else
+				glColor3f(1.0f, 1.0f, 1.0f);
+			glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
+		}
+		glEnd();
+	}
 
 	glBegin(GL_LINE_STRIP);
 	glColor3f(1.0f, 0.0f, 1.0f);
@@ -103,10 +118,10 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 				prog.modifyStep(-0.01);
 				break;
 			case GLFW_KEY_UP:
-				prog.modifyWeight(0.1);
+				prog.modifyWeight(0.5);
 				break;
 			case GLFW_KEY_DOWN:
-				prog.modifyWeight(-0.1);
+				prog.modifyWeight(-0.5);
 				break;
 			case GLFW_KEY_N:
 				prog.toggleNurbs();
