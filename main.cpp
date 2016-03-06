@@ -45,7 +45,7 @@ void render() {
 	}
 	glEnd();
 
-	glBegin(GL_LINE_STRIP); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
+	glBegin(GL_LINE_STRIP);
 	glColor3f(1.0f, 0.0f, 1.0f);
 
 	for (int i = 0; i < prog.splinePts.size(); i++)
@@ -56,32 +56,31 @@ void render() {
 
 	if (prog.state == Program::State::ON_CURVE)
 	{
-		glBegin(GL_LINE_STRIP); 
-		glColor3f(1.0f, 0.0f, 0.0f);		// draw contributing control points
-
-		for (int i = 0; i < prog.convexPts.size(); i++)
-		{
-			glVertex2f((*prog.convexPts[i]).x, (*prog.convexPts[i]).y);
-		}
-		glEnd();
-
 		glBegin(GL_LINES); 
 		glColor3f(1.0f, 1.0f, 0.0f);
 
-		for (int i = 0; i < prog.geoPts.size(); i++)
+		for (int i = 0; i < prog.geoPts.size() - 1; i++)
 		{
 			glVertex2f((*prog.geoPts[i]).x, (*prog.geoPts[i]).y);
 		}
 		glEnd();
-
-		glBegin(GL_POINTS);
+		
+		glBegin(GL_LINE_STRIP);
 		glColor3f(1.0f, 0.0f, 0.0f);
 		for (int i = 0; i < prog.convexPts.size(); i++)
 		{
 			glVertex2f((*prog.convexPts[i]).x, (*prog.convexPts[i]).y);
 		}
 		glEnd();
+
+		int idx = prog.geoPts.size() - 1;
+		glBegin(GL_POINTS);
+		glColor3f(1.0f, 1.0f, 0.0f);
+		glVertex2f((*prog.geoPts[idx]).x, (*prog.geoPts[idx]).y);
+		glEnd();
+
 	}
+
 }
 
 
