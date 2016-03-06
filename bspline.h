@@ -3,12 +3,26 @@
 
 #include "point2D.h"
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
 class BSpline
 {
 public:
+	int getIndexOfFocus(float u)
+	{
+		int i = 0;
+		for (i = 0; i < m + k; i++)
+		{
+			if ((u == 1 && knots[i + 1] >= 1) || (u >= knots[i] && u < knots[i + 1]))
+				return i;
+		}
+		//if (u >= knots[i])
+		//	return i - 1;
+		return -1;
+	}
+
 	Point2D getPoint(float u)
 	{
 		float x = 0;
@@ -45,31 +59,12 @@ public:
 		knots = U;
 	}
 
-	int getIndexOfFocus(float u)
-	{
-		int i = 0;
-		for (i = 0; i < m + k; i++)
-		{
-			if (u >= knots[i] && u < knots[i + 1])
-				return i;
-		}
-		if (u >= knots[i])
-			return i - 1;
-		return -1;
-	}
-
 	Point2D bruteSum(float u)
 	{
 		return bruteSum(m, k, u, ctrlPts, knots);
 	}
 
-	Point2D effSum(float u)
-	{
-		int d = getIndexOfFocus(u);
-		return effSum(d, u);
-	}
-
-	Point2D effSum(int d, float u)
+	Point2D *effSum(int d, float u, vector<Point2D*> *geoPts, vector<Point2D*> *convexPts)
 	{
 		//Input k, m, E[], u[], u
 		//k: order of B-spline
@@ -78,10 +73,17 @@ public:
 		//u[ ]: knot sequence
 		//u: fixed parameter value
 
+		if (convexPts)
+			convexPts->clear();
+		if (geoPts)
+			geoPts->clear();
 		Point2D *c = new Point2D[k];
+
 		for (int i = 0; i <= k - 1; i++)
 		{
 			c[i] = ctrlPts[d - i]; //nonzero coefficients
+			if (convexPts)
+				convexPts->push_back(&ctrlPts[d - i]);
 		}
 		int step = 0;
 		for (int r = k; r >= 2; r--)
@@ -91,28 +93,58 @@ public:
 			{
 				float omega = (u - knots[i]) / (knots[i + r - 1] - knots[i]);
 				c[s] = c[s] * omega + c[s + 1] * (1 - omega);
+				//cout << "x:" << c[s].x << " y:" << c[s].y << "\n";
 				i = i - 1;
+				if (geoPts)
+				{
+					geoPts->push_back(new Point2D(c[s]));
+					if (s > 0 && s < r - 2)
+						geoPts->push_back(new Point2D(c[s]));
+				}
 			}
 		}
-		return c[0];
+		return new Point2D(c[0]);
 	}
 
-	/*
-	static Point2D effSum(int m, int k, int d, float u, Point2D *ctrlPts, float *knots)
+	Point2D *effSum(int d, float u)
 	{
-		//Input k, m, E[], u[], u
-		//k: order of B-spline
-		//m: number of control points
-		//E[ ]: coefficient vector( can be x[ ], y[ ], z[ ] of the control points
-		//u[ ]: knot sequence
-		//u: fixed parameter value
+		return effSum(d, u, 0, 0);
+	}
 
+	void getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float step_u)
+	{
+		list->clear();
+		u_list->clear();
+
+		float u = 0;
+
+		if (m + 1 < k)
+			return;
+		int d = 0;
+		while (u <= 1)
+		{
+			while (u < 1 && u >= knots[d + 1] && d < m + k)
+				d++;
+
+			list->push_back(effSum(d, u));
+			u_list->push_back(u);
+			u += step_u;
+		}
+	}
+
+	Point2D *getGeoLines(int d, float u)
+	{
 		Point2D *c = new Point2D[k];
+
+		int size = ((k - 1) * k) / 2;
+		Point2D *result = new Point2D[size];
+		int offs = 0;
 		for (int i = 0; i <= k - 1; i++)
 		{
 			c[i] = ctrlPts[d - i]; //nonzero coefficients
 		}
 		int step = 0;
+
 		for (int r = k; r >= 2; r--)
 		{
 			int i = d;
@@ -121,12 +153,12 @@ public:
 				float omega = (u - knots[i]) / (knots[i + r - 1] - knots[i]);
 				c[s] = c[s] * omega + c[s + 1] * (1 - omega);
 				i = i - 1;
+				result[offs] = c[s];
+				offs++;
 			}
 		}
-		return c[0];
-	}*/
-
-	void getLinePoints(vector<Point2D> *result, float step_u);
+		return result;// c[0];
+	}
 
 	static float *standardKnotSeq(int m, int k);
 	static double bSplineBasis(int i, int k, double u, float *knots);

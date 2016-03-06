@@ -4,12 +4,12 @@ using namespace std;
 
 void Program::updateBSpline()
 {
-	Point2D *c = new Point2D[points.size()];
-	int m = points.size() - 1;
+	Point2D *c = new Point2D[ctrlPts.size()];
+	int m = ctrlPts.size() - 1;
 
-	for (int i = 0; i < points.size(); i++)
+	for (int i = 0; i < ctrlPts.size(); i++)
 	{
-		c[i] = points[i];
+		c[i] = *ctrlPts[i];
 	}
 
 	spline.setControlPoints(m, c);
@@ -21,41 +21,72 @@ void Program::updateBSpline()
 
 void Program::getSplineLines()
 {
-	spline.getLinePoints(&splinePoints, step_u);
+	spline.getLinePoints(&splinePts, &splinePts_u, step_u);
 }
 
 void Program::mouseRelease()
 {
+	state = State::NORMAL;
 	selected = -1;
 }
 
 void Program::mouseDrag(double mouseX, double mouseY)
 {
+	if (state == State::ON_CURVE)
+	{
+		scanCurvePoints(mouseX, mouseY);
+		return;
+	}
+
 	if (selected < 0)// || selected > m)
 		return;
-	Point2D &p = points[selected];
+	Point2D &p = *ctrlPts[selected];
 
-	cout << p.x << "\n";
 	p.x = mouseX;
 	p.y = mouseY;
 	updateBSpline();
 }
 
-void Program::mouseClick(int button, double mouseX, double mouseY)
+void Program::scanCurvePoints(double mouseX, double mouseY)
 {
-	for (int i = 0; i < points.size(); i++){
-		if (abs(points[i].x - mouseX) <= selectDistance &&
-			abs(points[i].y - mouseY) <= selectDistance){
+	for (int i = 0; i < splinePts.size(); i++){
+		if (abs((*splinePts[i]).x - mouseX) <= selectDistance &&
+			abs((*splinePts[i]).y - mouseY) <= selectDistance){
+			state = State::ON_CURVE;
+			float u = splinePts_u[i];
+			int d = spline.getIndexOfFocus(u);
+			spline.effSum(d, u, &geoPts, &convexPts);
 			selected = i;
+			break;
 		}
 	}
-	if (button == GLFW_MOUSE_BUTTON_LEFT && selected == -1){
-		selected = points.size();
-		points.push_back(Point2D(mouseX, mouseY));
-		updateBSpline();
+}
+
+void Program::mouseClick(int button, double mouseX, double mouseY)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	{
+		for (int i = 0; i < ctrlPts.size(); i++){
+			if (abs((*ctrlPts[i]).x - mouseX) <= selectDistance &&
+				abs((*ctrlPts[i]).y - mouseY) <= selectDistance){
+				state = State::NORMAL;
+				selected = i;
+				return;
+			}
+		}
+
+		scanCurvePoints(mouseX, mouseY);
+
+		if (selected == -1){
+			state = State::NORMAL;
+			selected = ctrlPts.size();
+			ctrlPts.push_back(new Point2D(mouseX, mouseY));
+			updateBSpline();
+		}
 	}
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && selected > -1){
-		points.erase(points.begin() + selected);
+		state = State::NORMAL;
+		ctrlPts.erase(ctrlPts.begin() + selected);
 		updateBSpline();
 		selected = -1;
 	}

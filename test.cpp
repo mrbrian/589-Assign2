@@ -9,18 +9,109 @@ using namespace std;
 
 void geometric_1()	// making a simple line..
 {
-	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
+	// i expect a single straight lines.   setup a
+	float u = 0.5;
+	Point2D expected[3] = { Point2D(0.5, 0.5), Point2D(-0.5, 0.5), Point2D(0, 0.5) };
 
-	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
-	float knots[5] = { 0, 0, 0.5, 1, 1 };
-	Point2D **actual = BSpline::getSplineLines(2, 2, pts, knots, 0.5);
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	float *knots = BSpline::standardKnotSeq(2, 3);
+
+	BSpline bs;
+	bs.setKnots(knots);
+	bs.setControlPoints(2, pts);
+	bs.setOrder(3);
+
+	vector<Point2D*> actual;
+	bs.effSum(2, u, &actual, 0);
 
 	for (int i = 0; i < 3; i++)
 	{
 		if (!expected[i].equals(actual[i]))
-			cout << "program_getSplineLines_1 fail\n";
+			cout << "geometric_1 fail\n";
 	}
-	cout << "program_getSplineLines_1 pass\n";
+	cout << "geometric_1 pass\n";
+}
+
+void geometric_2()	// making a simple line..
+{
+	// i expect a single straight lines.   setup a
+	float u = 0.75;
+	int k = 2;
+	Point2D expected[3] = { Point2D(0.5, 0.5) };
+
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	float *knots = BSpline::standardKnotSeq(2, k);  // 0,0,1/2,1,1
+
+	BSpline bs;
+	bs.setKnots(knots);
+	bs.setControlPoints(2, pts);
+	bs.setOrder(k);
+
+	vector<Point2D*> actual;
+	bs.effSum(2, u, &actual, 0);
+
+	for (int i = 0; i < 1; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "geometric_2 fail\n";
+	}
+	cout << "geometric_2 pass\n";
+}
+
+void geometric_3()	// making a simple line..
+{
+	// i expect a single straight lines.   setup a
+	float u = 0.5;
+	int k = 4;
+	int m = 3;
+	Point2D expected[7] = { Point2D(1, 0.5), Point2D(0, 1), Point2D(0, 1), Point2D(-1, 0.5), Point2D(0.5, 0.75), Point2D(-0.5, 0.75), Point2D(0, 0.75) };
+
+	Point2D pts[4] = { Point2D(-1, 0), Point2D(-1, 1), Point2D(1, 1), Point2D(1, 0) };
+	float *knots = BSpline::standardKnotSeq(m, k);  // 0,0,0,0.5,1,1,1,1
+
+	BSpline bs;
+	bs.setKnots(knots);
+	bs.setControlPoints(m, pts);
+	bs.setOrder(k);
+
+	vector<Point2D*> actual;
+	int d = bs.getIndexOfFocus(u);
+	bs.effSum(d, u, &actual,0);
+
+	for (int i = 0; i < 7; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "geometric_3 fail\n";
+	}
+	cout << "geometric_3 pass\n";
+}
+
+void geometric_4()	// making a simple line..
+{
+	// i expect a single straight lines.   setup a
+	float u = 0.25;
+	int k = 4;
+	int m = 3;
+	Point2D expected[4] = { Point2D(1, 0), Point2D(1, 1), Point2D(-1, 1), Point2D(-1, 0) };
+
+	Point2D pts[6] = { Point2D(-1, 0), Point2D(-1, 1), Point2D(1, 1), Point2D(1, 0), Point2D(2, 1), Point2D(3, 0) };
+	float *knots = BSpline::standardKnotSeq(m, k);  // 0,0,0,0.5,1,1,1,1
+
+	BSpline bs;
+	bs.setKnots(knots);
+	bs.setControlPoints(m, pts);
+	bs.setOrder(k);
+
+	vector<Point2D*> actual;
+	int d = bs.getIndexOfFocus(u);
+	bs.effSum(d, u, 0, &actual);
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "geometric_4 fail\n";
+	}
+	cout << "geometric_4 pass\n";
 }
 
 void program_getSplineLines_1()	// making a simple line..
@@ -70,7 +161,7 @@ void make_standardKnotSeq_1()
 
 void bSplinePoint_Efficient_1()
 {
-	Point2D expected = Point2D(0, 0);
+	Point2D expected = Point2D(0, 0.5);
 
 	float u = 0.5f;
 	int m = 2;
@@ -85,60 +176,12 @@ void bSplinePoint_Efficient_1()
 	bs.setKnots(knots);
 	bs.setOrder(k);
 	int d = 2;
-	Point2D actual = bs.effSum(d, u);
+	Point2D actual = *bs.effSum(d, u);
 
 	if (expected.equals(&actual))
 		cout << "bSplinePoint_Efficient_1 pass\n";
 	else
 		cout << "bSplinePoint_Efficient_1 fail\n";
-}
-
-void bSplinePoint_2()
-{
-	int expected = 4;
-
-	float u = 1;
-	int m = 3;
-	int k = 2;
-	Point2D pts[4] = { Point2D(0, 0), Point2D(0, 1), Point2D(1, 1), Point2D(1, 0) };
-	float knots[7] = { 0, 0, 0.33, 0.66, 1, 1 };
-
-	//iterate
-	// generate a single bspline point
-	BSpline bs = BSpline();
-	bs.setControlPoints(m, pts);
-	bs.setKnots(knots);
-	bs.setOrder(k);
-	int actual = bs.getIndexOfFocus(u);
-
-	if (expected == actual)
-		cout << "bSplinePoint_2 pass\n";
-	else
-		cout << "bSplinePoint_2 fail\n";
-}
-
-void bSplinePoint_2a()
-{
-	int expected = 5;
-
-	float u = 1;
-	int m = 3;
-	int k = 3;
-	Point2D pts[4] = { Point2D(0, 0), Point2D(0, 1), Point2D(1, 1), Point2D(1, 0) };
-	float knots[7] = { 0, 0, 0, 0.5, 1, 1, 1 };
-
-	//iterate
-	// generate a single bspline point
-	BSpline bs = BSpline();
-	bs.setControlPoints(m, pts);
-	bs.setKnots(knots);
-	bs.setOrder(k);
-	int actual = bs.getIndexOfFocus(u);
-
-	if (expected == actual)
-		cout << "bSplinePoint_2a pass\n";
-	else
-		cout << "bSplinePoint_2a fail\n";
 }
 
 void bSplinePoint_2b()
@@ -157,7 +200,7 @@ void bSplinePoint_2b()
 	bs.setControlPoints(m, pts);
 	bs.setKnots(knots);
 	bs.setOrder(k);
-	Point2D actual = bs.effSum(u);
+	Point2D actual = *bs.effSum(3, u);
 
 	if (expected.equals(&actual))
 		cout << "bSplinePoint_2b pass\n";
@@ -291,38 +334,19 @@ void bSplineBasis_3()
 		cout << "bSplineBasis_3 fail\n";
 }
 
-void indexFocus_1()
-{
-	BSpline bs = BSpline();
-
-	float expected = 2;
-	float knots[5] = { 0, 1, 1, 2, 3 };
-	Point2D pts[4] = { Point2D(0,0), Point2D(0,1), Point2D(1,1), Point2D(1,0) };
-
-	bs.setOrder(2);
-	bs.setControlPoints(3, pts);
-	bs.setKnots(knots);
-	
-	int actual = bs.getIndexOfFocus(1.2);
-
-    if (expected == actual)
-        cout << "indexFocus_1 pass\n";
-    else
-        cout << "indexFocus_1 fail\n";
-}
-
 void eff_bSplinePoint_1()
 {
 	BSpline bs;
 	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
 	bs.setControlPoints(2, pts);
 
-	float *knots = BSpline::standardKnotSeq(2,3);
+	float *knots = BSpline::standardKnotSeq(2,3); // 0,0,0,1,1,1
 	bs.setKnots(knots);
 	bs.setOrder(3);
 
 	Point2D expected = Point2D(1, 1);
-	Point2D actual = bs.effSum(0.5f);
+	Point2D actual = *bs.effSum(2, 0.5f);
+	actual = *bs.effSum(2, 1);
 
 	if (expected.equals(&actual))
 		cout << "eff_bSplinePoint_1 pass\n";
@@ -333,6 +357,10 @@ void eff_bSplinePoint_1()
 Tests::Tests()
 {
 	// efficient algorithm
+	geometric_1();
+	geometric_2();
+	geometric_3();
+	geometric_4();
 	eff_bSplinePoint_1();
 	bSplinePoint_Efficient_1();
 	eff_program_getSplineLines_2();
@@ -348,8 +376,5 @@ Tests::Tests()
 	bSplinePoint_2b();
     bSplineBasis_1();
     bSplineBasis_2();
-	indexFocus_1();
-	bSplinePoint_2();
-	bSplinePoint_2a();
 	program_getSplineLines_1();
 }

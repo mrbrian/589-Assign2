@@ -39,20 +39,49 @@ void render() {
 	//We draw a line on the screen, which gets transformed by the modelview matrix
 	glBegin(GL_POINTS); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
 	glColor3f(1.0f, 1.0f, 1.0f);
-	for (int i = 0; i < prog.points.size(); i++)
+	for (int i = 0; i < prog.ctrlPts.size(); i++)
 	{
-		glVertex2f(prog.points[i].x, prog.points[i].y);
+		glVertex2f((*prog.ctrlPts[i]).x, (*prog.ctrlPts[i]).y);
 	}
 	glEnd();
 
 	glBegin(GL_LINE_STRIP); //GL_LINE_STRIP, GL_POINTS, GL_QUADS, etc...
 	glColor3f(1.0f, 0.0f, 1.0f);
 
-	for (int i = 0; i < prog.splinePoints.size(); i++)
+	for (int i = 0; i < prog.splinePts.size(); i++)
 	{
-		glVertex2f(prog.splinePoints[i].x, prog.splinePoints[i].y);
+		glVertex2f((*prog.splinePts[i]).x, (*prog.splinePts[i]).y);
 	}
 	glEnd();
+
+	if (prog.state == Program::State::ON_CURVE)
+	{
+		glBegin(GL_LINE_STRIP); 
+		glColor3f(1.0f, 0.0f, 0.0f);		// draw contributing control points
+
+		for (int i = 0; i < prog.convexPts.size(); i++)
+		{
+			glVertex2f((*prog.convexPts[i]).x, (*prog.convexPts[i]).y);
+		}
+		glEnd();
+
+		glBegin(GL_LINES); 
+		glColor3f(1.0f, 1.0f, 0.0f);
+
+		for (int i = 0; i < prog.geoPts.size(); i++)
+		{
+			glVertex2f((*prog.geoPts[i]).x, (*prog.geoPts[i]).y);
+		}
+		glEnd();
+
+		glBegin(GL_POINTS);
+		glColor3f(1.0f, 0.0f, 0.0f);
+		for (int i = 0; i < prog.convexPts.size(); i++)
+		{
+			glVertex2f((*prog.convexPts[i]).x, (*prog.convexPts[i]).y);
+		}
+		glEnd();
+	}
 }
 
 

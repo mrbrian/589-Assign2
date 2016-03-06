@@ -12,11 +12,19 @@ using namespace std;
 class Program
 {
 public:
+	enum State { NORMAL, ON_CURVE };
+	State state = State::NORMAL;
+
 	void render();
 	void addPoint();
 	void deleteSelected();
-	vector<Point2D> points;
-	vector<Point2D> splinePoints;
+
+	vector<Point2D*> ctrlPts;
+	vector<Point2D*> splinePts;
+	vector<float> splinePts_u;
+	vector<Point2D*> geoPts;
+	vector<Point2D*> convexPts;
+
 	void mouseClick(int button, double mouseX, double mouseY);
 	void mouseDrag(double mouseX, double mouseY);
 	void mouseRelease();
@@ -32,6 +40,7 @@ private:
 
 	void updateBSpline();
 	void getSplineLines();
+	void scanCurvePoints(double mouseX, double mouseY);
 };
 
 #endif
