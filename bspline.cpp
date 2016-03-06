@@ -1,6 +1,155 @@
 #include "bspline.h"
 
-Point2D **BSpline::getSplineLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize)
+int BSpline::getIndexOfFocus(float u)
+{
+	int i = 0;
+	for (i = 0; i < m + k; i++)
+	{
+		if ((u == 1 && knots[i + 1] >= 1) || (u >= knots[i] && u < knots[i + 1]))
+			return i;
+	}
+	//if (u >= knots[i])
+	//	return i - 1;
+	return -1;
+}
+
+Point2D BSpline::getPoint(float u)
+{
+	float x = 0;
+	float y = 0;
+	for (int i = 0; i < k; i++)
+	{
+		Point2D p = ctrlPts[i];
+		x += p.x;
+		y += p.y;
+	}
+	return Point2D(-1, -1);
+}
+
+void BSpline::setControlPoints(int in_m, Point2D *p)
+{
+	m = in_m;
+	ctrlPts = p;
+}
+
+int BSpline::getOrder()
+{
+	return k;
+}
+
+void BSpline::setOrder(int in_k)
+{
+	k = in_k;
+	if (k < 1)
+		k = 1;
+}
+
+void BSpline::setKnots(float *U)
+{
+	knots = U;
+}
+
+Point2D BSpline::bruteSum(float u)
+{
+	return bruteSum(m, k, u, ctrlPts, knots);
+}
+
+Point2D *BSpline::effSum(int d, float u, vector<Point2D*> *geoPts, vector<Point2D*> *convexPts)
+{
+	//k: order of B-spline
+	//m: number of control points
+	//E[ ]: coefficient vector( can be x[ ], y[ ], z[ ] of the control points
+	//u[ ]: knot sequence
+	//u: fixed parameter value
+
+	if (convexPts)
+		convexPts->clear();
+	if (geoPts)
+		geoPts->clear();
+	Point2D *c = new Point2D[k];
+
+	for (int i = 0; i <= k - 1; i++)
+	{
+		c[i] = ctrlPts[d - i]; //nonzero coefficients
+		if (convexPts)
+			convexPts->push_back(&ctrlPts[d - i]);
+	}
+	int step = 0;
+	for (int r = k; r >= 2; r--)
+	{
+		int i = d;
+		for (int s = 0; s <= r - 2; s++)
+		{
+			float omega = (u - knots[i]) / (knots[i + r - 1] - knots[i]);
+			c[s] = c[s] * omega + c[s + 1] * (1 - omega);
+			//cout << "x:" << c[s].x << " y:" << c[s].y << "\n";
+			i = i - 1;
+			if (geoPts)
+			{
+				geoPts->push_back(new Point2D(c[s]));
+				if (s > 0 && s < r - 2)
+					geoPts->push_back(new Point2D(c[s]));
+			}
+		}
+	}
+	return new Point2D(c[0]);
+}
+
+Point2D *BSpline::effSum(int d, float u)
+{
+	return effSum(d, u, 0, 0);
+}
+
+void BSpline::getLinePoints(vector<Point2D*> *list, vector<float> *u_list, float step_u)
+{
+	list->clear();
+	u_list->clear();
+
+	float u = 0;
+
+	if (m + 1 < k)
+		return;
+	int d = 0;
+	while (u <= 1)
+	{
+		while (u < 1 && u >= knots[d + 1] && d < m + k)
+			d++;
+
+		list->push_back(effSum(d, u));
+		u_list->push_back(u);
+		u += step_u;
+	}
+}
+
+Point2D *BSpline::getGeoLines(int d, float u)
+{
+	Point2D *c = new Point2D[k];
+
+	int size = ((k - 1) * k) / 2;
+	Point2D *result = new Point2D[size];
+	int offs = 0;
+	for (int i = 0; i <= k - 1; i++)
+	{
+		c[i] = ctrlPts[d - i]; //nonzero coefficients
+	}
+	int step = 0;
+
+	for (int r = k; r >= 2; r--)
+	{
+		int i = d;
+		for (int s = 0; s <= r - 2; s++)
+		{
+			float omega = (u - knots[i]) / (knots[i + r - 1] - knots[i]);
+			c[s] = c[s] * omega + c[s + 1] * (1 - omega);
+			i = i - 1;
+			result[offs] = c[s];
+			offs++;
+		}
+	}
+	return result;// c[0];
+}
+
+Point2D **BSpline::getCurveLines(int m, int k, Point2D *ctrlPts, float *knots, float stepSize)
 {
 	float u = 0;
 	int numSteps = (int)(1.0f / stepSize);
@@ -67,11 +216,6 @@ double BSpline::bSplineBasis(int i, int m, int k, double u, float *knots)
 {
 	if (u >= knots[m + 1] && i >= m)
 		return 1;
-	return bSplineBasis(i, k, u, knots);
-}
-
-double BSpline::bSplineBasis(int i, int k, double u, float *knots)
-{
 	if (k <= 0)
 		return 0;
 	if (k == 1)
@@ -83,7 +227,7 @@ double BSpline::bSplineBasis(int i, int k, double u, float *knots)
 	}
 	double denomA = knots[i + k - 1] - knots[i];
 	double denomB = knots[i + k] - knots[i + 1];
-	double a = denomA == 0 ? 0 : (u - knots[i]) / denomA * bSplineBasis(i, k - 1, u, knots);
-	double b = denomB == 0 ? 0 : (knots[i + k] - u) / denomB * bSplineBasis(i + 1, k - 1, u, knots);
+	double a = denomA == 0 ? 0 : (u - knots[i]) / denomA * bSplineBasis(i, m, k - 1, u, knots);
+	double b = denomB == 0 ? 0 : (knots[i + k] - u) / denomB * bSplineBasis(i + 1, m, k - 1, u, knots);
 	return (a + b);
 }

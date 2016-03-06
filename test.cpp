@@ -4,8 +4,125 @@
 #include <iostream>
 #include "point2D.h"
 #include "program.h"
+#include "nurbs.h"
 
 using namespace std;
+
+void nurbs_1()
+{
+	Nurbs n;
+	Point2D expected[3] = { Point2D(-1, 0), Point2D(0, 0.5), Point2D(1, 0) };
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	int m = 2;
+	int k = 3;
+	float *knots = Nurbs::standardKnotSeq(m, k);
+	float weights[] = { 1, 1, 1 };
+	n.setControlPoints(2, pts);
+	n.setOrder(k);
+	n.setKnots(knots);
+	n.setWeights(weights);
+
+	vector<Point2D*> actual = *n.getCurveLines(0.5f);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "nurbs_1 fail\n";
+	}
+	cout << "nurbs_1 pass\n";
+}
+
+void nurbs_weight_3()
+{
+	Nurbs n;
+	float expected = 1;
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	int m = 2;
+	int k = 3;
+	float *knots = Nurbs::standardKnotSeq(m, k);
+	float weights[] = { 1, 1, 1 };
+	n.setControlPoints(2, pts);
+	n.setOrder(k);
+	n.setKnots(knots);
+	n.setWeights(weights);
+
+	float actual = n.sumWeights(1);
+
+	if (expected != actual)
+		cout << "nurbs_weight_3 fail\n";
+	else
+		cout << "nurbs_weight_3 pass\n";
+}
+
+void nurbs_2()
+{
+	Nurbs n;
+	Point2D expected[3] = { Point2D(-1, 0), Point2D(0, 2.0 / 3.0), Point2D(1, 0) };
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	int m = 2;
+	int k = 3;
+	float *knots = Nurbs::standardKnotSeq(m, k);
+	float weights[] = { 1, 2, 1 };
+	n.setControlPoints(2, pts);
+	n.setOrder(k);
+	n.setKnots(knots);
+	n.setWeights(weights);
+
+	vector<Point2D*> actual = *n.getCurveLines(0.5f);
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (!expected[i].equals(actual[i]))
+			cout << "nurbs_2 fail\n";
+	}
+	cout << "nurbs_2 pass\n";
+}
+
+void nurbs_weight_1()
+{
+	Nurbs n;
+	float expected = 1.5;
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	int m = 2;
+	int k = 3;
+	float u = 0.5;
+	float *knots = Nurbs::standardKnotSeq(m, k);
+	float weights[] = { 1, 2, 1 };
+	n.setControlPoints(2, pts);
+	n.setOrder(k);
+	n.setKnots(knots);
+	n.setWeights(weights);
+
+	float actual = n.sumWeights(u);
+
+	if (expected != actual)
+		cout << "nurbs_weight_1 fail\n";
+	else
+		cout << "nurbs_weight_1 pass\n";
+}
+
+void nurbs_weight_2()
+{
+	Nurbs n;
+	Point2D expected = Point2D(0, 2.0 / 3.0);
+	Point2D pts[3] = { Point2D(-1, 0), Point2D(0, 1), Point2D(1, 0) };
+	int m = 2;
+	int k = 3;
+	float u = 0.5;
+	float *knots = Nurbs::standardKnotSeq(m, k);
+	float weights[] = { 1, 2, 1 };
+	n.setControlPoints(2, pts);
+	n.setOrder(k);
+	n.setKnots(knots);
+	n.setWeights(weights);
+
+	Point2D *actual = n.sumPointWeights(u);
+
+	if (!expected.equals(actual))
+		cout << "nurbs_weight_2 fail\n";
+	else
+		cout << "nurbs_weight_2 pass\n";
+}
 
 void geometric_1()	// making a simple line..
 {
@@ -114,36 +231,36 @@ void geometric_4()	// making a simple line..
 	cout << "geometric_4 pass\n";
 }
 
-void program_getSplineLines_1()	// making a simple line..
+void program_getCurveLines_1()	// making a simple line..
 {
 	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
 
 	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
 	float knots[5] = { 0, 0, 0.5, 1, 1 };
-	Point2D **actual = BSpline::getSplineLines(2, 2, pts, knots, 0.5);
+	Point2D **actual = BSpline::getCurveLines(2, 2, pts, knots, 0.5);
 
 	for (int i = 0; i < 3; i++)
 	{
 		if (!expected[i].equals(actual[i]))
-			cout << "program_getSplineLines_1 fail\n";
+			cout << "program_getCurveLines_1 fail\n";
 	}
-	cout << "program_getSplineLines_1 pass\n";
+	cout << "program_getCurveLines_1 pass\n";
 }
 
-void eff_program_getSplineLines_2()	// use the efficient index finding 
+void eff_program_getCurveLines_2()	// use the efficient index finding 
 {
 	Point2D expected[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
 
 	Point2D pts[3] = { Point2D(-1, 1), Point2D(0, 1), Point2D(1, 1) };
 	float knots[5] = { 0, 0, 0.5, 1, 1 };
-	Point2D **actual = BSpline::getSplineLines(2, 2, pts, knots, 0.5);
+	Point2D **actual = BSpline::getCurveLines(2, 2, pts, knots, 0.5);
 
 	for (int i = 0; i < 3; i++)
 	{
 		if (!expected[i].equals(actual[i]))
-			cout << "program_getSplineLines_1 fail\n";
+			cout << "program_getCurveLines_1 fail\n";
 	}
-	cout << "program_getSplineLines_1 pass\n";
+	cout << "program_getCurveLines_1 pass\n";
 }
 
 void make_standardKnotSeq_1()
@@ -256,84 +373,6 @@ void bruteBSplinePoint_Tail()
 		cout << "bruteBSplinePoint_Tail fail\n";
 }
 
-void bSplineBasis_1()
-{
-    float expected = 1;
-    float knots[4] = {0, 1, 2, 3};
-	double actual = BSpline::bSplineBasis(1, 2, 2.1, knots);
-	actual += BSpline::bSplineBasis(2, 2, 2.1, knots);
-
-    if (expected == actual)
-        cout << "bSplineBasis_1 pass\n";
-    else
-        cout << "bSplineBasis_1 fail\n";
-}
-
-void bSplineBasis_2()
-{
-	float expected = 0.5;
-	float knots[3] = { 0, 1, 2 };
-	double actual = BSpline::bSplineBasis(0, 2, 0.5, knots);
-
-	if (expected == actual)
-		cout << "bSplineBasis_2 pass\n";
-	else
-		cout << "bSplineBasis_2 fail\n";
-}
-
-void bSplineBasis_1_2_1()
-{
-	float expected = 1;
-	float knots[6] = { 0, 0.33, 0.66, 1 };
-	double actual = BSpline::bSplineBasis(0, 2, 0.75, knots);
-	actual += BSpline::bSplineBasis(1, 2, 0.75, knots);
-	actual += BSpline::bSplineBasis(2, 2, 0.75, knots);
-
-	if (expected == actual)
-		cout << "bSplineBasis_1_2_1 pass\n";
-	else
-		cout << "bSplineBasis_1_2_1 fail\n";
-}
-
-void bSplineBasis_1_1_1()
-{
-	float expected = 1;
-	float knots[6] = { 0, 0.33, 0.66, 1 };
-	double actual = BSpline::bSplineBasis(0, 1, 0.99, knots);
-	actual = BSpline::bSplineBasis(1, 1, 0.999, knots);
-	actual = BSpline::bSplineBasis(2, 1, 0.999, knots);
-
-	if (expected == actual)
-		cout << "bSplineBasis_1_1_1 pass\n";
-	else
-		cout << "bSplineBasis_1_1_1 fail\n";
-}
-
-void bSplineBasis_1_1_0()
-{
-	float expected = 1;
-	float knots[6] = { 0, 0.33, 0.66, 1 };
-	double actual = BSpline::bSplineBasis(0, 1, 0, knots);
-
-	if (expected == actual)
-		cout << "bSplineBasis_1_1_0 pass\n";
-	else
-		cout << "bSplineBasis_1_1_0 fail\n";
-}
-
-void bSplineBasis_3()
-{
-	float expected = 1;
-	float knots[6] = { 0, 0, 0.33, 0.66, 1, 1 };
-	double actual = BSpline::bSplineBasis(3, 2, 0.8, knots);
-	actual += BSpline::bSplineBasis(2, 2, 0.8, knots);
-
-	if (expected == actual)
-		cout << "bSplineBasis_3 pass\n";
-	else
-		cout << "bSplineBasis_3 fail\n";
-}
-
 void eff_bSplinePoint_1()
 {
 	BSpline bs;
@@ -357,15 +396,21 @@ void eff_bSplinePoint_1()
 Tests::Tests()
 {
 	// efficient algorithm
-	geometric_1();
+	nurbs_weight_3();
+	nurbs_weight_1();
+	nurbs_weight_2();
+	nurbs_1();
+	nurbs_2();
+
+	/*geometric_1();
 	geometric_2();
 	geometric_3();
 	geometric_4();
 	eff_bSplinePoint_1();
 	bSplinePoint_Efficient_1();
-	eff_program_getSplineLines_2();
+	eff_program_getCurveLines_2();
 
-	program_getSplineLines_1();
+	program_getCurveLines_1();
 	make_standardKnotSeq_1();
 	bSplineBasis_1_1_0();
 	bSplineBasis_1_1_1();
@@ -376,5 +421,5 @@ Tests::Tests()
 	bSplinePoint_2b();
     bSplineBasis_1();
     bSplineBasis_2();
-	program_getSplineLines_1();
+	program_getCurveLines_1();*/
 }

@@ -74,7 +74,7 @@ void render() {
 		glEnd();
 
 		int idx = prog.geoPts.size() - 1;
-		glBegin(GL_POINTS);
+		glBegin(GL_LINE_STRIP);
 		glColor3f(1.0f, 1.0f, 0.0f);
 		glVertex2f((*prog.geoPts[idx]).x, (*prog.geoPts[idx]).y);
 		glEnd();
@@ -91,29 +91,17 @@ void keyboard(GLFWwindow *sender, int key, int scancode, int action, int mods) {
 		case GLFW_KEY_A:
 			cout << "A was pressed.\n";
 			break;
-		case GLFW_KEY_EQUAL:
-			{
-				int k = prog.modifyOrder(1);
-				printf("Spline order: %d\n", k);
-			}
-			break; 
 		case GLFW_KEY_MINUS:
-			{
-				int k = prog.modifyOrder(-1);
-				printf("Spline order: %d\n", k);
-			}
-			break;
-		case GLFW_KEY_LEFT_BRACKET:
 			{
 				float s = prog.modifyStep(0.01);
 				printf("U Increment: %f\n", s);
 			}
 			break;
-		case GLFW_KEY_RIGHT_BRACKET:
-		{
-			float s = prog.modifyStep(-0.01);
-			printf("U Increment: %f\n", s);
-		}
+		case GLFW_KEY_EQUAL:
+			{
+				float s = prog.modifyStep(-0.01);
+				printf("U Increment: %f\n", s);
+			}
 			break;
 		case GLFW_KEY_ESCAPE:
 			printf("Exciting..\n");

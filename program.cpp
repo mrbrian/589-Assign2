@@ -16,11 +16,6 @@ void Program::updateBSpline()
 	float *knots = BSpline::standardKnotSeq(m, order);
 	spline.setKnots(knots);
 	spline.setOrder(order);
-	getSplineLines();
-}
-
-void Program::getSplineLines()
-{
 	spline.getLinePoints(&splinePts, &splinePts_u, step_u);
 }
 
@@ -106,9 +101,10 @@ float Program::modifyStep(float v)
 int Program::modifyOrder(int v)
 {	
 	order += v;
-	if (order <= 0)
-		order = 1;
+	if (order < 2)
+		order = 2;
 
+	printf("Spline order: %d\n", order);
 	updateBSpline();
 	return order;
 }
